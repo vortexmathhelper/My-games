@@ -5,7 +5,6 @@
   <title>VORTEX Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* ——— GLOBAL THEME ——— */
     :root {
       --bg: #020617;
       --card: #0f172a;
@@ -14,527 +13,608 @@
       --text-main: #e5e7eb;
       --text-muted: #9ca3af;
     }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+    body{background:radial-gradient(circle at top,#020617 0,#020617 40%,#000 100%);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+    /* START */
+    .start-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+    .start-card{position:relative;max-width:480px;width:100%;border-radius:1.5rem;padding:1.75rem;
+      background:radial-gradient(circle at top left,rgba(56,189,248,.25),transparent 55%),
+                 radial-gradient(circle at bottom right,rgba(129,140,248,.25),transparent 55%),
+                 linear-gradient(145deg,#020617,#020617);
+      border:1px solid rgba(148,163,184,.5);box-shadow:0 30px 80px rgba(15,23,42,.95);overflow:hidden;}
+    .start-glow{position:absolute;inset:-40%;background:
+      radial-gradient(circle at 10% 0,rgba(56,189,248,.18),transparent 55%),
+      radial-gradient(circle at 90% 100%,rgba(129,140,248,.18),transparent 55%);opacity:.9;pointer-events:none;}
+    .start-inner{position:relative;z-index:1;}
+    .start-pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .7rem;border-radius:999px;
+      background:rgba(15,23,42,.9);border:1px solid rgba(148,163,184,.5);font-size:.75rem;color:var(--text-muted);margin-bottom:.9rem;}
+    .start-pill-dot{width:7px;height:7px;border-radius:999px;background:var(--accent);box-shadow:0 0 10px rgba(129,140,248,.9);}
+    .start-logo{font-size:2.4rem;letter-spacing:.35em;text-indent:.35em;font-weight:800;margin-bottom:.4rem;
+      background:linear-gradient(120deg,#e5e7eb,#a5b4fc,#38bdf8);-webkit-background-clip:text;color:transparent;}
+    .start-sub{font-size:.9rem;color:var(--text-muted);margin-bottom:1.4rem;max-width:22rem;}
+    .start-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1.4rem;font-size:.8rem;color:var(--text-muted);}
+    .start-stat{display:flex;flex-direction:column;gap:.1rem;}
+    .start-stat strong{font-size:1.1rem;color:var(--text-main);}
+    .start-btn-row{display:flex;gap:.75rem;flex-wrap:wrap;}
+    .btn{border-radius:999px;padding:.6rem 1.3rem;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:.18s ease;
+      display:inline-flex;align-items:center;gap:.4rem;background:none;color:inherit;}
+    .btn-primary{background:linear-gradient(135deg,#6366f1,#22c55e);color:#020617;font-weight:600;box-shadow:0 14px 35px rgba(79,70,229,.6);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 18px 40px rgba(79,70,229,.8);}
+    .btn-ghost{background:rgba(15,23,42,.9);border-color:rgba(148,163,184,.6);color:var(--text-muted);}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--text-main);background:rgba(15,23,42,1);}
 
-    body {
-      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    /* APP SHELL */
+    .app-shell{display:none;min-height:100vh;grid-template-columns:240px minmax(0,1fr);
+      background:radial-gradient(circle at top,#020617 0,#020617 40%,#000 100%);}
+    @media(max-width:900px){.app-shell{grid-template-columns:minmax(0,1fr);} .sidebar{position:sticky;top:0;z-index:10;}}
+    .sidebar{border-right:1px solid rgba(15,23,42,.95);background:linear-gradient(to bottom,rgba(15,23,42,.98),rgba(15,23,42,.96));
+      padding:1rem;display:flex;flex-direction:column;gap:1rem;}
+    .side-logo{display:flex;align-items:center;gap:.5rem;font-size:.95rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
+    .side-logo-dot{width:10px;height:10px;border-radius:999px;background:radial-gradient(circle,#22c55e,#16a34a);
+      box-shadow:0 0 12px rgba(34,197,94,.9);}
+    .side-tag{font-size:.75rem;color:var(--text-muted);}
+    .nav-group{margin-top:.5rem;display:flex;flex-direction:column;gap:.4rem;}
+    .nav-btn{width:100%;text-align:left;border-radius:.7rem;padding:.55rem .7rem;border:1px solid transparent;background:transparent;
+      color:var(--text-muted);font-size:.85rem;cursor:pointer;display:flex;align-items:center;gap:.45rem;transition:.16s ease;}
+    .nav-btn span.icon{width:20px;text-align:center;opacity:.9;}
+    .nav-btn.active{background:var(--accent-soft);border-color:var(--accent);color:var(--text-main);}
+    .nav-btn:hover{background:rgba(15,23,42,.9);border-color:rgba(55,65,81,.9);color:var(--text-main);}
+    .side-footer{margin-top:auto;font-size:.7rem;color:var(--text-muted);opacity:.8;}
+    .side-footer code{font-size:.7rem;background:rgba(15,23,42,.9);padding:.1rem .3rem;border-radius:.3rem;border:1px solid rgba(31,41,55,.9);}
 
-    /* ——— START SCREEN ——— */
-    .start-wrap {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
+    .main{padding:1.25rem 1.5rem 1.5rem;display:flex;flex-direction:column;gap:1rem;}
+    .top-bar{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;align-items:center;}
+    .top-title{display:flex;flex-direction:column;gap:.15rem;}
+    .top-title h1{font-size:1.1rem;}
+    .top-title span{font-size:.8rem;color:var(--text-muted);}
+    .search-wrap{display:flex;align-items:center;gap:.4rem;padding:.4rem .7rem;border-radius:999px;
+      background:rgba(15,23,42,.95);border:1px solid rgba(55,65,81,.9);min-width:220px;}
+    .search-wrap span{font-size:.85rem;color:var(--text-muted);}
+    .search-wrap input{border:none;outline:none;background:transparent;color:var(--text-main);font-size:.85rem;width:100%;}
 
-    .start-card {
-      position: relative;
-      max-width: 480px;
-      width: 100%;
-      border-radius: 1.5rem;
-      padding: 1.75rem;
-      background:
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.25), transparent 55%),
-        radial-gradient(circle at bottom right, rgba(129, 140, 248, 0.25), transparent 55%),
-        linear-gradient(145deg, #020617, #020617);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.95);
-      overflow: hidden;
-    }
+    .content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,2fr);gap:1rem;}
+    @media(max-width:900px){.content-grid{grid-template-columns:minmax(0,1fr);}}
+    .card{background:rgba(15,23,42,.96);border-radius:1rem;border:1px solid rgba(55,65,81,.9);padding:.9rem;
+      box-shadow:0 18px 40px rgba(15,23,42,.9);}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.85rem;}
+    .card-header span{color:var(--text-muted);font-size:.8rem;}
 
-    .start-glow {
-      position: absolute;
-      inset: -40%;
-      background:
-        radial-gradient(circle at 10% 0, rgba(56, 189, 248, 0.18), transparent 55%),
-        radial-gradient(circle at 90% 100%, rgba(129, 140, 248, 0.18), transparent 55%);
-      opacity: 0.9;
-      pointer-events: none;
-    }
+    .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem;max-height:380px;overflow-y:auto;padding-right:.25rem;}
+    .item-card{background:rgba(15,23,42,.98);border-radius:.8rem;border:1px solid rgba(55,65,81,.9);padding:.4rem;cursor:pointer;
+      transition:.16s ease;display:flex;flex-direction:column;gap:.35rem;font-size:.8rem;}
+    .item-card:hover{border-color:var(--accent);box-shadow:0 10px 24px rgba(15,23,42,.95);transform:translateY(-1px);}
+    .item-thumb{border-radius:.6rem;overflow:hidden;border:1px solid rgba(31,41,55,.9);background:#020617;aspect-ratio:16/9;}
+    .item-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .item-meta{display:flex;flex-direction:column;gap:.1rem;}
+    .item-meta span{font-size:.7rem;color:var(--text-muted);}
+    .item-tag{align-self:flex-start;font-size:.7rem;padding:.1rem .4rem;border-radius:999px;background:rgba(99,102,241,.12);
+      color:#a5b4fc;border:1px solid rgba(99,102,241,.6);}
 
-    .start-inner {
-      position: relative;
-      z-index: 1;
-    }
+    .viewer{display:flex;flex-direction:column;gap:.5rem;}
+    .viewer-header{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;}
+    .viewer-title{display:flex;flex-direction:column;gap:.1rem;}
+    .viewer-title span{font-size:.75rem;color:var(--text-muted);}
+    .viewer-tag{font-size:.7rem;padding:.15rem .45rem;border-radius:999px;background:rgba(34,197,94,.12);
+      color:#4ade80;border:1px solid rgba(34,197,94,.6);}
+    .viewer-frame{position:relative;border-radius:.9rem;overflow:hidden;border:1px solid rgba(30,64,175,.9);
+      background:radial-gradient(circle at top,rgba(15,23,42,.9),#020617);min-height:260px;}
+    iframe{width:100%;height:100%;border:none;display:block;}
+    .viewer-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:.5rem;color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem;}
 
-    .start-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 0.9rem;
-    }
+    .settings-list{display:flex;flex-direction:column;gap:.6rem;}
+    .setting-row{background:rgba(15,23,42,.98);border-radius:.8rem;border:1px solid rgba(55,65,81,.9);
+      padding:.6rem .7rem;display:flex;justify-content:space-between;align-items:center;font-size:.85rem;}
+    .setting-row span{color:var(--text-muted);font-size:.8rem;}
+    .toggle{width:38px;height:20px;border-radius:999px;background:rgba(31,41,55,.9);border:1px solid rgba(55,65,81,.9);
+      position:relative;cursor:pointer;}
+    .toggle-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:999px;background:#e5e7eb;transition:.16s ease;}
+    .toggle.on{background:rgba(34,197,94,.18);border-color:#22c55e;}
+    .toggle.on .toggle-knob{transform:translateX(16px);background:#bbf7d0;}
 
-    .start-pill-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 10px rgba(129, 140, 248, 0.9);
-    }
+    .ai-wrap{display:flex;flex-direction:column;gap:.6rem;}
+    .ai-log{background:rgba(15,23,42,.98);border-radius:.8rem;border:1px solid rgba(55,65,81,.9);
+      padding:.6rem .7rem;max-height:260px;overflow-y:auto;font-size:.8rem;}
+    .ai-msg{margin-bottom:.4rem;}
+    .ai-msg.me{color:#a5b4fc;}
+    .ai-msg.bot{color:#4ade80;}
+    .ai-input-row{display:flex;gap:.4rem;}
+    .ai-input-row input{flex:1;border-radius:.7rem;border:1px solid rgba(55,65,81,.9);background:rgba(15,23,42,.98);
+      color:var(--text-main);padding:.4rem .6rem;font-size:.85rem;outline:none;}
+    .ai-input-row button{border-radius:.7rem;border:1px solid rgba(99,102,241,.9);background:var(--accent);color:#020617;
+      padding:.4rem .9rem;font-size:.85rem;cursor:pointer;}
 
-    .start-logo {
-      font-size: 2.4rem;
-      letter-spacing: 0.35em;
-      text-indent: 0.35em;
-      font-weight: 800;
-      margin-bottom: 0.4rem;
-      background: linear-gradient(120deg, #e5e7eb, #a5b4fc, #38bdf8);
-      -webkit-background-clip: text;
-      color: transparent;
-      text-align: left;
-    }
+    footer{padding:.7rem 1.5rem 1rem;font-size:.75rem;color:var(--text-muted);text-align:center;
+      border-top:1px solid rgba(15,23,42,.95);background:radial-gradient(circle at bottom,#020617,#000);}
+  </style>
+</head>
+<body>
+  <!-- START -->
+  <div id="startScreen" class="start-wrap">
+    <div class="start-card">
+      <div class="start-glow"></div>
+      <div class="start-inner">
+        <div class="start-pill">
+          <div class="start-pill-dot"></div>
+          VORTEX • In‑page hub • Searchable
+        </div>
+        <div class="start-logo">VORTEX</div>
+        <p class="start-sub">
+          A compact browser hub for lightweight games, apps, and a built‑in mini AI. Everything stays in one tab.
+        </p>
+        <div class="start-row">
+          <div class="start-stat"><strong>1000+</strong><span>Game slots</span></div>
+          <div class="start-stat"><strong>25</strong><span>App shortcuts</span></div>
+          <div class="start-stat"><strong>1</strong><span>Single HTML file</span></div>
+        </div>
+        <div class="start-btn-row">
+          <button class="btn btn-primary" onclick="enterVortex()">Enter hub</button>
+          <button class="btn btn-ghost" onclick="alert('Edit index.html on GitHub to customize games, apps, and AI.')">
+            How this works
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    .start-sub {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 1.4rem;
-      max-width: 22rem;
-    }
+  <!-- APP SHELL -->
+  <div id="appShell" class="app-shell">
+    <aside class="sidebar">
+      <div>
+        <div class="side-logo">
+          <div class="side-logo-dot"></div>
+          VORTEX
+        </div>
+        <div class="side-tag">Single‑page game & app hub</div>
+      </div>
 
-    .start-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1.4rem;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
+      <div class="nav-group">
+        <button class="nav-btn active" data-page="games" onclick="switchPage('games', this)">
+          <span class="icon">🎮</span> Games
+        </button>
+        <button class="nav-btn" data-page="apps" onclick="switchPage('apps', this)">
+          <span class="icon">📱</span> Apps
+        </button>
+        <button class="nav-btn" data-page="ai" onclick="switchPage('ai', this)">
+          <span class="icon">🤖</span> Vortex AI
+        </button>
+        <button class="nav-btn" data-page="settings" onclick="switchPage('settings', this)">
+          <span class="icon">⚙️</span> Settings
+        </button>
+      </div>
 
-    .start-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
+      <div class="side-footer">
+        Hosted on <code>GitHub Pages</code>.  
+        Edit <code>index.html</code> to change everything.
+      </div>
+    </aside>
 
-    .start-stat strong {
-      font-size: 1.1rem;
-      color: var(--text-main);
-    }
+    <main class="main">
+      <div class="top-bar">
+        <div class="top-title">
+          <h1 id="pageTitle">Games</h1>
+          <span id="pageSubtitle">Browse and launch games directly inside this page.</span>
+        </div>
+        <div class="search-wrap">
+          <span>🔍</span>
+          <input id="searchInput" type="text" placeholder="Search games & apps…" oninput="handleSearch(this.value)">
+        </div>
+      </div>
 
-    .start-btn-row {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
+      <!-- GAMES -->
+      <div id="pageGames" class="content-grid">
+        <div class="card">
+          <div class="card-header">
+            <div>Game library</div>
+            <span>Top names first, then extra slots.</span>
+          </div>
+          <div id="gameList" class="list"></div>
+        </div>
 
-    .btn {
-      border-radius: 999px;
-      padding: 0.6rem 1.3rem;
-      font-size: 0.9rem;
-      border: 1px solid transparent;
-      cursor: pointer;
-      transition: 0.18s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: none;
-      color: inherit;
-    }
+        <div class="card viewer">
+          <div class="viewer-header">
+            <div class="viewer-title">
+              <strong id="viewerTitle">No game selected</strong>
+              <span id="viewerSubtitle">Choose a game card to load it in the viewer.</span>
+            </div>
+            <div id="viewerTag" class="viewer-tag">Idle</div>
+          </div>
+          <div class="viewer-frame">
+            <iframe id="viewerFrame" src="" title="VORTEX viewer"></iframe>
+            <div id="viewerPlaceholder" class="viewer-placeholder">
+              <div>Nothing loaded yet.</div>
+              <div style="font-size:.75rem;">
+                First few games are built‑in demos that always work. Others are slots you can wire later.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1, #22c55e);
-      color: #020617;
-      font-weight: 600;
-      box-shadow: 0 14px 35px rgba(79, 70, 229, 0.6);
-    }
+      <!-- APPS -->
+      <div id="pageApps" class="content-grid" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div>App shortcuts</div>
+            <span>Built‑in tools that run in‑page.</span>
+          </div>
+          <div id="appList" class="list"></div>
+        </div>
 
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 40px rgba(79, 70, 229, 0.8);
-    }
+        <div class="card viewer">
+          <div class="viewer-header">
+            <div class="viewer-title">
+              <strong id="viewerTitleApps">No app selected</strong>
+              <span id="viewerSubtitleApps">Choose an app card to load it in the viewer.</span>
+            </div>
+            <div id="viewerTagApps" class="viewer-tag">Idle</div>
+          </div>
+          <div class="viewer-frame">
+            <iframe id="viewerFrameApps" src="" title="VORTEX app viewer"></iframe>
+            <div id="viewerPlaceholderApps" class="viewer-placeholder">
+              <div>Nothing loaded yet.</div>
+              <div style="font-size:.75rem;">
+                First few apps are built‑in demos. Others are simple tools you can customize.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    .btn-ghost {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(148, 163, 184, 0.6);
-      color: var(--text-muted);
-    }
+      <!-- AI -->
+      <div id="pageAI" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div>Vortex AI (on‑page)</div>
+            <span>Simple helper, no new tab.</span>
+          </div>
+          <div class="ai-wrap">
+            <div id="aiLog" class="ai-log"></div>
+            <div class="ai-input-row">
+              <input id="aiInput" type="text" placeholder="Ask Vortex AI something…" onkeydown="if(event.key==='Enter'){sendAI()}">
+              <button onclick="sendAI()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--text-main);
-      background: rgba(15, 23, 42, 1);
-    }
+      <!-- SETTINGS -->
+      <div id="pageSettings" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div>Appearance & behavior</div>
+            <span>Only affects how this page looks on your device.</span>
+          </div>
+          <div class="settings-list">
+            <div class="setting-row">
+              <div>Dark background<br><span>Toggle between dark and light base theme.</span></div>
+              <div class="toggle" id="toggleDark" onclick="toggleDarkMode(this)"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="setting-row">
+              <div>Soft blur<br><span>Add a subtle blur effect behind cards.</span></div>
+              <div class="toggle" id="toggleBlur" onclick="toggleBlur(this)"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="setting-row">
+              <div>Hide viewers<br><span>Hide the iframe viewers for a minimal layout.</span></div>
+              <div class="toggle" id="toggleViewer" onclick="toggleViewer(this)"><div class="toggle-knob"></div></div>
+            </div>
+            <div class="setting-row">
+              <div>Reset layout<br><span>Reset theme and viewer settings to defaults.</span></div>
+              <button class="btn btn-ghost" style="padding:.35rem .8rem;font-size:.8rem;" onclick="resetSettings()">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
 
-    /* ——— APP SHELL ——— */
-    .app-shell {
-      display: none;
-      min-height: 100vh;
-      grid-template-columns: 240px minmax(0, 1fr);
-      background: radial-gradient(circle at top, #020617 0, #020617 40%, #000 100%);
-    }
+  <footer>
+    VORTEX Hub • Single‑file static site. Customize by editing <code>index.html</code> in your GitHub repository.
+  </footer>
 
-    @media (max-width: 900px) {
-      .app-shell {
-        grid-template-columns: minmax(0, 1fr);
+  <script>
+    // BUILT‑IN GAME PAGES
+    const builtInGamePages = {
+      "demo-clicker": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;">
+        <h2>Clicker Demo</h2><p>Click the button as many times as you can.</p>
+        <button id="btn" style="padding:10px 20px;border-radius:8px;border:none;background:#6366f1;color:white;font-size:16px;cursor:pointer;">Clicks: 0</button>
+        <script>let c=0;btn.onclick=()=>{c++;btn.textContent='Clicks: '+c;}<\/script></body></html>
+      `,
+      "demo-dodge": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;">
+        <h2>Square Dodge Demo</h2><p>Use arrow keys to move the blue square. Avoid the red one.</p>
+        <canvas id="c" width="300" height="200" style="border:1px solid #4b5563;background:#020617;"></canvas>
+        <script>
+          const ctx=c.getContext('2d');let px=20,py=80,ex=260,ey=80,dx=-2;
+          document.addEventListener('keydown',e=>{if(e.key==='ArrowUp')py-=10;if(e.key==='ArrowDown')py+=10;if(e.key==='ArrowLeft')px-=10;if(e.key==='ArrowRight')px+=10;});
+          function loop(){ctx.clearRect(0,0,300,200);ctx.fillStyle='#3b82f6';ctx.fillRect(px,py,20,20);ctx.fillStyle='#ef4444';ctx.fillRect(ex,ey,20,20);ex+=dx;if(ex<0||ex>280)dx*=-1;
+          if(Math.abs(px-ex)<20&&Math.abs(py-ey)<20){ctx.fillStyle='#f97316';ctx.fillText('Hit!',130,100);}requestAnimationFrame(loop);}loop();
+        <\/script></body></html>
+      `,
+      "demo-pong": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;">
+        <h2>Mini Pong Demo</h2><p>Move with left/right arrows.</p>
+        <canvas id="c" width="320" height="200" style="border:1px solid #4b5563;background:#020617;"></canvas>
+        <script>
+          const ctx=c.getContext('2d');let bx=160,by=100,bxv=2,byv=2,px=140;
+          document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')px-=10;if(e.key==='ArrowRight')px+=10;});
+          function loop(){ctx.clearRect(0,0,320,200);ctx.fillStyle='#22c55e';ctx.fillRect(px,180,40,8);ctx.fillStyle='#e5e7eb';ctx.beginPath();ctx.arc(bx,by,5,0,Math.PI*2);ctx.fill();
+          bx+=bxv;by+=byv;if(bx<5||bx>315)bxv*=-1;if(by<5)byv*=-1;if(by>175&&by<185&&bx>px&&bx<px+40)byv*=-1;if(by>200){bx=160;by=100;}requestAnimationFrame(loop);}loop();
+        <\/script></body></html>
+      `
+    };
+
+    // BUILT‑IN APPS
+    const builtInAppPages = {
+      "demo-notes": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;margin:0;padding:10px;">
+        <h2>Notes Demo</h2><textarea style="width:95%;height:70%;background:#020617;color:#e5e7eb;border:1px solid #4b5563;border-radius:8px;padding:8px;">Type notes here...</textarea>
+        </body></html>
+      `,
+      "demo-timer": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;">
+        <h2>Timer Demo</h2><div id="t" style="font-size:32px;margin:10px;">0</div>
+        <button id="b" style="padding:8px 16px;border-radius:8px;border:none;background:#6366f1;color:white;cursor:pointer;">Start</button>
+        <script>let s=0,run=false;setInterval(()=>{if(run){s++;t.textContent=s;}},1000);b.onclick=()=>{run=!run;b.textContent=run?'Pause':'Start';};<\/script>
+        </body></html>
+      `,
+      "demo-calc": `
+        <!DOCTYPE html><html><body style="background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;margin:0;">
+        <h2>Mini Calculator Demo</h2>
+        <input id="a" type="number" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <input id="b" type="number" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <button id="add" style="margin:4px;padding:6px 12px;border-radius:6px;border:none;background:#22c55e;color:#020617;cursor:pointer;">Add</button>
+        <div id="r" style="margin-top:8px;">Result: 0</div>
+        <script>add.onclick=()=>{r.textContent='Result: '+(Number(a.value||0)+Number(b.value||0));};<\/script>
+        </body></html>
+      `
+    };
+
+    // TOP GAME NAMES
+    const topGameNames = [
+      "Slope","Run 3","Subway Surfers","Temple Run","Flappy Bird","2048","Tetris","Snake",
+      "Pac‑Man","Minesweeper","Geometry Dash","Dino Runner","Crossy Road","Stack","Helix Jump",
+      "Paper.io","Agar.io","Krunker","Shell Shockers","Moto X3M","Happy Wheels","Stickman Hook",
+      "Basketball Stars","Soccer Random","Tunnel Rush","Drift Hunters","Madalin Stunt Cars",
+      "Fireboy & Watergirl","Vex 5","Vex 6","Vex 7","Stick Fight","Gun Mayhem","Rooftop Snipers",
+      "Getting Over It (clone)","Super Mario (fan)","Zelda (fan)","Tower Defense","Bloons (clone)",
+      "Clicker Heroes (clone)","Cookie Clicker (clone)","Idle Miner (clone)","Idle Breakout (clone)",
+      "Chess","Checkers","Connect 4","UNO (clone)","Card Solitaire","Pong Classic"
+    ];
+
+    const games = [];
+    for (let i = 1; i <= 1000; i++) {
+      if (i === 1) {
+        games.push({
+          id:"game-demo-clicker",
+          name:"Clicker Demo",
+          description:"Built‑in clicker game that always works.",
+          mode:"srcdoc",
+          srcdocKey:"demo-clicker",
+          url:"",
+          thumb:"https://via.placeholder.com/160x90.png?text=Clicker",
+          tag:"Built‑in"
+        });
+      } else if (i === 2) {
+        games.push({
+          id:"game-demo-dodge",
+          name:"Square Dodge Demo",
+          description:"Built‑in dodge mini‑game.",
+          mode:"srcdoc",
+          srcdocKey:"demo-dodge",
+          url:"",
+          thumb:"https://via.placeholder.com/160x90.png?text=Dodge",
+          tag:"Built‑in"
+        });
+      } else if (i === 3) {
+        games.push({
+          id:"game-demo-pong",
+          name:"Mini Pong Demo",
+          description:"Built‑in mini pong.",
+          mode:"srcdoc",
+          srcdocKey:"demo-pong",
+          url:"",
+          thumb:"https://via.placeholder.com/160x90.png?text=Pong",
+          tag:"Built‑in"
+        });
+      } else if (i - 4 < topGameNames.length) {
+        const name = topGameNames[i - 4];
+        games.push({
+          id:"game-top-"+i,
+          name,
+          description:"Top pick: "+name+". Add a real URL later if you have one.",
+          mode:"iframe",
+          srcdocKey:"",
+          url:"about:blank",
+          thumb:"https://via.placeholder.com/160x90.png?text="+encodeURIComponent(name),
+          tag:"Top"
+        });
+      } else {
+        games.push({
+          id:"game-"+i,
+          name:"Vortex Game "+i,
+          description:"Extra slot #"+i+". Edit index.html to point this to a real game URL.",
+          mode:"iframe",
+          srcdocKey:"",
+          url:"about:blank",
+          thumb:"https://via.placeholder.com/160x90.png?text=Game+"+i,
+          tag:"Slot"
+        });
       }
-      .sidebar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
+    }
+
+    const apps = [
+      {id:"app-notes",name:"Notes",description:"Built‑in notes app.",mode:"srcdoc",srcdocKey:"demo-notes",url:"",thumb:"https://via.placeholder.com/160x90.png?text=Notes",tag:"Built‑in"},
+      {id:"app-timer",name:"Timer",description:"Simple timer demo.",mode:"srcdoc",srcdocKey:"demo-timer",url:"",thumb:"https://via.placeholder.com/160x90.png?text=Timer",tag:"Built‑in"},
+      {id:"app-calc",name:"Calculator",description:"Mini calculator demo.",mode:"srcdoc",srcdocKey:"demo-calc",url:"",thumb:"https://via.placeholder.com/160x90.png?text=Calc",tag:"Built‑in"},
+    ];
+    while (apps.length < 25) {
+      const n = apps.length + 1;
+      apps.push({
+        id:"app-"+n,
+        name:"Vortex Tool "+n,
+        description:"Placeholder tool #"+n+". Customize in index.html.",
+        mode:"iframe",
+        srcdocKey:"",
+        url:"about:blank",
+        thumb:"https://via.placeholder.com/160x90.png?text=Tool+"+n,
+        tag:"Tool"
+      });
+    }
+
+    let currentPage="games";
+    let searchQuery="";
+
+    const startScreen=document.getElementById("startScreen");
+    const appShell=document.getElementById("appShell");
+    const gameListEl=document.getElementById("gameList");
+    const appListEl=document.getElementById("appList");
+    const viewerFrame=document.getElementById("viewerFrame");
+    const viewerPlaceholder=document.getElementById("viewerPlaceholder");
+    const viewerTitle=document.getElementById("viewerTitle");
+    const viewerSubtitle=document.getElementById("viewerSubtitle");
+    const viewerTag=document.getElementById("viewerTag");
+    const viewerFrameApps=document.getElementById("viewerFrameApps");
+    const viewerPlaceholderApps=document.getElementById("viewerPlaceholderApps");
+    const viewerTitleApps=document.getElementById("viewerTitleApps");
+    const viewerSubtitleApps=document.getElementById("viewerSubtitleApps");
+    const viewerTagApps=document.getElementById("viewerTagApps");
+    const pageTitle=document.getElementById("pageTitle");
+    const pageSubtitle=document.getElementById("pageSubtitle");
+    const pageGames=document.getElementById("pageGames");
+    const pageApps=document.getElementById("pageApps");
+    const pageAI=document.getElementById("pageAI");
+    const pageSettings=document.getElementById("pageSettings");
+    const aiLog=document.getElementById("aiLog");
+    const aiInput=document.getElementById("aiInput");
+
+    function enterVortex(){startScreen.style.display="none";appShell.style.display="grid";switchPage("games",document.querySelector('.nav-btn[data-page="games"]'));}
+    function switchPage(page,btn){
+      currentPage=page;
+      document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+      if(btn)btn.classList.add("active");
+      pageGames.style.display=page==="games"?"grid":"none";
+      pageApps.style.display=page==="apps"?"grid":"none";
+      pageAI.style.display=page==="ai"?"block":"none";
+      pageSettings.style.display=page==="settings"?"block":"none";
+      if(page==="games"){pageTitle.textContent="Games";pageSubtitle.textContent="Browse and launch games directly inside this page.";}
+      else if(page==="apps"){pageTitle.textContent="Apps";pageSubtitle.textContent="Open tools in the built‑in viewer.";}
+      else if(page==="ai"){pageTitle.textContent="Vortex AI";pageSubtitle.textContent="Lightweight helper that stays in this tab.";}
+      else{pageTitle.textContent="Settings";pageSubtitle.textContent="Adjust how VORTEX looks and behaves on this device.";}
+      handleSearch(searchQuery);
+    }
+
+    function renderLists(){
+      gameListEl.innerHTML="";appListEl.innerHTML="";
+      const q=searchQuery.trim().toLowerCase();
+      games.forEach(game=>{
+        if(q && !game.name.toLowerCase().includes(q) && !game.description.toLowerCase().includes(q))return;
+        const card=document.createElement("button");
+        card.type="button";card.className="item-card";card.onclick=()=>loadGame(game);
+        const thumb=document.createElement("div");thumb.className="item-thumb";
+        const img=document.createElement("img");img.src=game.thumb;img.alt=game.name;thumb.appendChild(img);
+        const meta=document.createElement("div");meta.className="item-meta";
+        const title=document.createElement("div");title.textContent=game.name;
+        const desc=document.createElement("span");desc.textContent=game.description;
+        meta.appendChild(title);meta.appendChild(desc);
+        const tag=document.createElement("div");tag.className="item-tag";tag.textContent=game.tag;
+        card.appendChild(thumb);card.appendChild(meta);card.appendChild(tag);
+        gameListEl.appendChild(card);
+      });
+      apps.forEach(app=>{
+        if(q && !app.name.toLowerCase().includes(q) && !app.description.toLowerCase().includes(q))return;
+        const card=document.createElement("button");
+        card.type="button";card.className="item-card";card.onclick=()=>loadApp(app);
+        const thumb=document.createElement("div");thumb.className="item-thumb";
+        const img=document.createElement("img");img.src=app.thumb;img.alt=app.name;thumb.appendChild(img);
+        const meta=document.createElement("div");meta.className="item-meta";
+        const title=document.createElement("div");title.textContent=app.name;
+        const desc=document.createElement("span");desc.textContent=app.description;
+        meta.appendChild(title);meta.appendChild(desc);
+        const tag=document.createElement("div");tag.className="item-tag";tag.textContent=app.tag;
+        card.appendChild(thumb);card.appendChild(meta);card.appendChild(tag);
+        appListEl.appendChild(card);
+      });
+    }
+
+    function handleSearch(value){searchQuery=value||"";renderLists();}
+
+    function loadGame(game){
+      viewerTitle.textContent=game.name;
+      viewerSubtitle.textContent=game.description;
+      viewerTag.textContent=game.tag;
+      viewerPlaceholder.style.display="none";
+      viewerFrame.src="";viewerFrame.srcdoc="";
+      if(game.mode==="srcdoc" && builtInGamePages[game.srcdocKey]){
+        viewerFrame.srcdoc=builtInGamePages[game.srcdocKey];
+      }else{
+        viewerFrame.srcdoc="";viewerFrame.src=game.url;
       }
     }
 
-    .sidebar {
-      border-right: 1px solid rgba(15, 23, 42, 0.95);
-      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .side-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .side-logo-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: radial-gradient(circle, #22c55e, #16a34a);
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
-    }
-
-    .side-tag {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .nav-group {
-      margin-top: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .nav-btn {
-      width: 100%;
-      text-align: left;
-      border-radius: 0.7rem;
-      padding: 0.55rem 0.7rem;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      transition: 0.16s ease;
-    }
-
-    .nav-btn span.icon {
-      width: 20px;
-      text-align: center;
-      opacity: 0.9;
-    }
-
-    .nav-btn.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--text-main);
-    }
-
-    .nav-btn:hover {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(55, 65, 81, 0.9);
-      color: var(--text-main);
-    }
-
-    .side-footer {
-      margin-top: auto;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      opacity: 0.8;
-    }
-
-    .side-footer code {
-      font-size: 0.7rem;
-      background: rgba(15, 23, 42, 0.9);
-      padding: 0.1rem 0.3rem;
-      border-radius: 0.3rem;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-    }
-
-    /* ——— MAIN AREA ——— */
-    .main {
-      padding: 1.25rem 1.5rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .top-title {
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-    }
-
-    .top-title h1 {
-      font-size: 1.1rem;
-    }
-
-    .top-title span {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .search-wrap {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      min-width: 220px;
-    }
-
-    .search-wrap span {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .search-wrap input {
-      border: none;
-      outline: none;
-      background: transparent;
-      color: var(--text-main);
-      font-size: 0.85rem;
-      width: 100%;
-    }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
-      gap: 1rem;
-    }
-
-    @media (max-width: 900px) {
-      .content-grid {
-        grid-template-columns: minmax(0, 1fr);
+    function loadApp(app){
+      viewerTitleApps.textContent=app.name;
+      viewerSubtitleApps.textContent=app.description;
+      viewerTagApps.textContent=app.tag;
+      viewerPlaceholderApps.style.display="none";
+      viewerFrameApps.src="";viewerFrameApps.srcdoc="";
+      if(app.mode==="srcdoc" && builtInAppPages[app.srcdocKey]){
+        viewerFrameApps.srcdoc=builtInAppPages[app.srcdocKey];
+      }else{
+        viewerFrameApps.srcdoc="";viewerFrameApps.src=app.url;
       }
     }
 
-    .card {
-      background: rgba(15, 23, 42, 0.96);
-      border-radius: 1rem;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      padding: 0.9rem;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    function toggleDarkMode(el){
+      el.classList.toggle("on");
+      const on=el.classList.contains("on");
+      document.body.style.background=on?"radial-gradient(circle at top,#020617 0,#020617 40%,#000 100%)":"#f9fafb";
+      document.body.style.color=on?"var(--text-main)":"#020617";
+    }
+    function toggleBlur(el){
+      el.classList.toggle("on");
+      const on=el.classList.contains("on");
+      document.body.style.backdropFilter=on?"blur(10px)":"none";
+    }
+    function toggleViewer(el){
+      el.classList.toggle("on");
+      const hide=el.classList.contains("on");
+      document.querySelectorAll(".viewer-frame").forEach(v=>v.style.display=hide?"none":"block");
+    }
+    function resetSettings(){
+      ["toggleDark","toggleBlur","toggleViewer"].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove("on");});
+      document.body.style.background="radial-gradient(circle at top,#020617 0,#020617 40%,#000 100%)";
+      document.body.style.color="var(--text-main)";
+      document.body.style.backdropFilter="none";
+      document.querySelectorAll(".viewer-frame").forEach(v=>v.style.display="block");
     }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.6rem;
-      font-size: 0.85rem;
+    // SIMPLE ON‑PAGE AI
+    function addAIMessage(text,who){
+      const div=document.createElement("div");
+      div.className="ai-msg "+who;
+      div.textContent=(who==="me"?"You: ":"Vortex AI: ")+text;
+      aiLog.appendChild(div);
+      aiLog.scrollTop=aiLog.scrollHeight;
+    }
+    function sendAI(){
+      const q=aiInput.value.trim();
+      if(!q)return;
+      addAIMessage(q,"me");
+      aiInput.value="";
+      let reply="I'm a simple on‑page AI. I can't access the internet, but I can chat and explain basic things.";
+      const lower=q.toLowerCase();
+      if(lower.includes("hello")||lower.includes("hi")) reply="Hey! I'm Vortex AI. What do you want to do in this hub?";
+      else if(lower.includes("game")) reply="Try the top games first—Slope, Run 3, Subway Surfers, 2048, Geometry Dash, and more.";
+      else if(lower.includes("math")) reply="I can’t do full calculator work like a real engine, but you can use the Calculator app tab.";
+      else if(lower.includes("school")) reply="This is just a static page. Whether it’s blocked depends on your school’s filters.";
+      else if(lower.includes("help")) reply="Use the sidebar tabs: Games, Apps, Vortex AI, Settings. Search bar filters everything live.";
+      setTimeout(()=>addAIMessage(reply,"bot"),200);
     }
 
-    .card-header span {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    .list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 0.6rem;
-      max-height: 380px;
-      overflow-y: auto;
-      padding-right: 0.25rem;
-    }
-
-    .item-card {
-      background: rgba(15, 23, 42, 0.98);
-      border-radius: 0.8rem;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      padding: 0.4rem;
-      cursor: pointer;
-      transition: 0.16s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-    }
-
-    .item-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.95);
-      transform: translateY(-1px);
-    }
-
-    .item-thumb {
-      border-radius: 0.6rem;
-      overflow: hidden;
-      border: 1px solid rgba(31, 41, 55, 0.9);
-      background: #020617;
-      aspect-ratio: 16 / 9;
-    }
-
-    .item-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .item-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .item-meta span {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .item-tag {
-      align-self: flex-start;
-      font-size: 0.7rem;
-      padding: 0.1rem 0.4rem;
-      border-radius: 999px;
-      background: rgba(99, 102, 241, 0.12);
-      color: #a5b4fc;
-      border: 1px solid rgba(99, 102, 241, 0.6);
-    }
-
-    .viewer {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .viewer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
-    .viewer-title {
-      display: flex;
-      flex-direction: column;
-      gap: 0.1rem;
-    }
-
-    .viewer-title span {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .viewer-tag {
-      font-size: 0.7rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 999px;
-      background: rgba(34, 197, 94, 0.12);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.6);
-    }
-
-    .viewer-frame {
-      position: relative;
-      border-radius: 0.9rem;
-      overflow: hidden;
-      border: 1px solid rgba(30, 64, 175, 0.9);
-      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), #020617);
-      min-height: 260px;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-
-    .viewer-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      text-align: center;
-      padding: 1rem;
-    }
-
-    /* ——— SETTINGS ——— */
-    .settings-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-
-    .setting-row {
-      background: rgba(15, 23, 42, 0.98);
-      border-radius: 0.8rem;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      padding: 0.6rem 0.7rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
-    .setting-row span {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    .toggle {
-      width: 38px;
-      height: 20px;
-      border-radius: 999px;
-      background: rgba(31, 41, 55, 0.9);
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      position: relative;
-      cursor: pointer;
-    }
-
-    .toggle-knob {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      background: #e5e7eb;
+    renderLists();
+  </script>
+</body>
+</html>
