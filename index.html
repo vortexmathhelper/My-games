@@ -6,14 +6,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+
+    :root{
+      --rgb-mode: rainbow; /* rainbow | single | off */
+      --rgb-color: #4f46e5;
+    }
+
     body{
       margin:0;
-      background:#020617;
       color:#e5e7eb;
       display:flex;
       height:100vh;
+      background:#020617;
+      justify-content:center;
+      align-items:center;
     }
-    /* SIDEBAR */
+
+    .rgb-frame{
+      width:100%;
+      height:100%;
+      max-width:1400px;
+      max-height:900px;
+      padding:2px;
+      border-radius:18px;
+      position:relative;
+      overflow:hidden;
+      background:#000;
+    }
+
+    .rgb-border{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      border-radius:18px;
+      padding:2px;
+      box-sizing:border-box;
+    }
+
+    .rgb-border::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:18px;
+      border:3px solid transparent;
+      background:
+        conic-gradient(
+          from 0deg,
+          #ff0000,
+          #ff7f00,
+          #ffff00,
+          #00ff00,
+          #0000ff,
+          #4b0082,
+          #8f00ff,
+          #ff0000
+        );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+      animation: rgbSpin 8s linear infinite;
+      opacity:1;
+    }
+
+    @keyframes rgbSpin{
+      to{transform:rotate(360deg);}
+    }
+
+    .rgb-border.single::before{
+      background:none;
+      border-color:var(--rgb-color);
+      animation:none;
+    }
+
+    .rgb-border.off::before{
+      opacity:0;
+      animation:none;
+    }
+
+    .inner{
+      position:relative;
+      z-index:1;
+      width:100%;
+      height:100%;
+      border-radius:14px;
+      overflow:hidden;
+      background: radial-gradient(circle at top, #020617 0, #000 40%, #020617 100%);
+      display:flex;
+    }
+
     #sidebar{
       width:230px;
       background:#020617;
@@ -78,7 +160,6 @@
       font-size:10px;
     }
 
-    /* MAIN */
     #main{
       flex:1;
       padding:16px;
@@ -129,7 +210,7 @@
       overflow:hidden;
     }
     @media(max-width:900px){
-      body{flex-direction:column;}
+      .inner{flex-direction:column;}
       #sidebar{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;}
       .side-footer{display:none;}
       .content{grid-template-columns:minmax(0,1fr);}
@@ -188,6 +269,8 @@
       font-size:11px;
       color:#020617;
       font-weight:600;
+      background-size:cover;
+      background-position:center;
     }
     .thumb.alt1{background:linear-gradient(135deg,#22c55e,#06b6d4);}
     .thumb.alt2{background:linear-gradient(135deg,#f97316,#4f46e5);}
@@ -218,6 +301,7 @@
       justify-content:space-between;
       align-items:center;
       font-size:13px;
+      gap:6px;
     }
     .viewer-head span.sub{font-size:11px;color:#9ca3af;}
     .viewer-tag{
@@ -228,6 +312,24 @@
       color:#bbf7d0;
       background:#022c22;
     }
+    .viewer-actions{
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+    .viewer-actions button{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid #111827;
+      background:#020617;
+      color:#e5e7eb;
+      cursor:pointer;
+    }
+    .viewer-actions button:hover{
+      border-color:#4f46e5;
+    }
+
     .viewer-frame{
       position:relative;
       border-radius:10px;
@@ -261,7 +363,6 @@
 
     .hidden{display:none;}
 
-    /* AI */
     .ai-log{
       background:#020617;
       border-radius:8px;
@@ -298,7 +399,6 @@
       cursor:pointer;
     }
 
-    /* SETTINGS */
     .settings-list{
       display:flex;
       flex-direction:column;
@@ -313,6 +413,7 @@
       justify-content:space-between;
       align-items:center;
       font-size:12px;
+      gap:8px;
     }
     .setting-row span.sub{font-size:11px;color:#9ca3af;}
     .toggle{
@@ -343,142 +444,167 @@
       background:#bbf7d0;
     }
 
+    .color-select{
+      display:flex;
+      gap:4px;
+      flex-wrap:wrap;
+    }
+    .color-dot{
+      width:16px;
+      height:16px;
+      border-radius:999px;
+      border:1px solid #111827;
+      cursor:pointer;
+    }
+
     footer{
-      position:fixed;
-      bottom:0;
-      left:230px;
-      right:0;
-      padding:6px 12px;
+      position:absolute;
+      bottom:4px;
+      left:240px;
+      right:8px;
+      padding:4px 8px;
       font-size:11px;
       color:#6b7280;
-      background:#020617;
-      border-top:1px solid #111827;
+      background:transparent;
+      text-align:right;
     }
     @media(max-width:900px){
-      footer{left:0;}
+      footer{left:8px;text-align:center;}
     }
   </style>
 </head>
 <body>
-
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div>
-      <div class="logo"><span></span>VORTEX</div>
-      <div class="side-note">Single‑page hub • Games • Apps • AI</div>
-    </div>
-
-    <button class="tabBtn active" data-tab="games" onclick="switchTab('games', this)">
-      <span class="icon">🎮</span> Games
-    </button>
-    <button class="tabBtn" data-tab="apps" onclick="switchTab('apps', this)">
-      <span class="icon">📱</span> Apps
-    </button>
-    <button class="tabBtn" data-tab="ai" onclick="switchTab('ai', this)">
-      <span class="icon">🤖</span> Vortex AI
-    </button>
-    <button class="tabBtn" data-tab="settings" onclick="switchTab('settings', this)">
-      <span class="icon">⚙️</span> Settings
-    </button>
-
-    <div class="side-footer">
-      Hosted on <code>GitHub Pages</code><br>
-      Edit <code>index.html</code> to customize.
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main id="main">
-    <div class="top-bar">
-      <div class="top-title">
-        <h1 id="pageTitle">Games</h1>
-        <span id="pageSubtitle">Browse and launch games directly inside this page.</span>
-      </div>
-      <div class="search-wrap">
-        <span>🔍</span>
-        <input id="searchInput" placeholder="Search games & apps…" oninput="handleSearch(this.value)">
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <div class="content">
-
-      <!-- LEFT: LIST -->
-      <section class="card" id="listCard">
-        <div class="card-header">
-          <strong id="listTitle">Game library</strong>
-          <span id="listSubtitle">All items that match your search.</span>
+  <div class="rgb-frame">
+    <div id="rgbBorder" class="rgb-border"></div>
+    <div class="inner">
+      <aside id="sidebar">
+        <div>
+          <div class="logo"><span></span>VORTEX</div>
+          <div class="side-note">Single‑page hub • Games • Apps • AI</div>
         </div>
-        <div id="gameList" class="list"></div>
-        <div id="appList" class="list hidden"></div>
-      </section>
 
-      <!-- RIGHT: VIEWER / AI / SETTINGS -->
-      <section class="card viewer" id="viewerCard">
-        <!-- Games/Apps viewer -->
-        <div id="viewerSection">
-          <div class="viewer-head">
-            <div>
-              <div id="viewerTitle">No item selected</div>
-              <span id="viewerSub" class="sub">Choose a game or app to load it here.</span>
-            </div>
-            <div id="viewerTag" class="viewer-tag">Idle</div>
+        <button class="tabBtn active" data-tab="games" onclick="switchTab('games', this)">
+          <span class="icon">🎮</span> Games
+        </button>
+        <button class="tabBtn" data-tab="apps" onclick="switchTab('apps', this)">
+          <span class="icon">📱</span> Apps
+        </button>
+        <button class="tabBtn" data-tab="ai" onclick="switchTab('ai', this)">
+          <span class="icon">🤖</span> Vortex AI
+        </button>
+        <button class="tabBtn" data-tab="settings" onclick="switchTab('settings', this)">
+          <span class="icon">⚙️</span> Settings
+        </button>
+
+        <div class="side-footer">
+          Hosted on <code>GitHub Pages</code><br>
+          Edit <code>index.html</code> to customize.
+        </div>
+      </aside>
+
+      <main id="main">
+        <div class="top-bar">
+          <div class="top-title">
+            <h1 id="pageTitle">Games</h1>
+            <span id="pageSubtitle">Browse and launch games directly inside this page.</span>
           </div>
-          <div class="viewer-frame">
-            <iframe id="viewerFrame"></iframe>
-            <div id="viewerPlaceholder" class="viewer-placeholder">
-              <div>Nothing loaded yet.</div>
-              <div style="font-size:11px;">First few games and apps are built‑in demos that always work.</div>
-            </div>
+          <div class="search-wrap">
+            <span>🔍</span>
+            <input id="searchInput" placeholder="Search games & apps…" oninput="handleSearch(this.value)">
           </div>
         </div>
 
-        <!-- AI section -->
-        <div id="aiSection" class="hidden">
-          <div class="card-header">
-            <strong>Vortex AI</strong>
-            <span>On‑page helper, no new tab.</span>
-          </div>
-          <div class="ai-log" id="aiLog"></div>
-          <div class="ai-input-row">
-            <input id="aiInput" placeholder="Ask Vortex AI…" onkeydown="if(event.key==='Enter'){sendAI()}">
-            <button onclick="sendAI()">Send</button>
-          </div>
+        <div class="content">
+          <section class="card" id="listCard">
+            <div class="card-header">
+              <strong id="listTitle">Game library</strong>
+              <span id="listSubtitle">All items that match your search.</span>
+            </div>
+            <div id="gameList" class="list"></div>
+            <div id="appList" class="list hidden"></div>
+          </section>
+
+          <section class="card viewer" id="viewerCard">
+            <div id="viewerSection">
+              <div class="viewer-head">
+                <div>
+                  <div id="viewerTitle">No item selected</div>
+                  <span id="viewerSub" class="sub">Choose a game or app to load it here.</span>
+                </div>
+                <div class="viewer-actions">
+                  <div id="viewerTag" class="viewer-tag">Idle</div>
+                  <button onclick="fullscreenViewer()">⛶ Fullscreen</button>
+                  <button onclick="openExternal()">↗ Open</button>
+                </div>
+              </div>
+              <div class="viewer-frame">
+                <iframe id="viewerFrame"></iframe>
+                <div id="viewerPlaceholder" class="viewer-placeholder">
+                  <div>Nothing loaded yet.</div>
+                  <div style="font-size:11px;">First few games and apps are built‑in demos that always work.</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="aiSection" class="hidden">
+              <div class="card-header">
+                <strong>Vortex AI</strong>
+                <span>On‑page helper, no new tab.</span>
+              </div>
+              <div class="ai-log" id="aiLog"></div>
+              <div class="ai-input-row">
+                <input id="aiInput" placeholder="Ask Vortex AI…" onkeydown="if(event.key==='Enter'){sendAI()}">
+                <button onclick="sendAI()">Send</button>
+              </div>
+            </div>
+
+            <div id="settingsSection" class="hidden">
+              <div class="card-header">
+                <strong>Settings</strong>
+                <span>Visual + layout options.</span>
+              </div>
+              <div class="settings-list">
+                <div class="setting-row">
+                  <div>RGB mode<br><span class="sub">Rainbow, single color, or off.</span></div>
+                  <select id="rgbModeSelect" style="font-size:11px;padding:3px 6px;border-radius:999px;border:1px solid #111827;background:#020617;color:#e5e7eb;"
+                          onchange="changeRgbMode(this.value)">
+                    <option value="rainbow">Rainbow (default)</option>
+                    <option value="single">Single color</option>
+                    <option value="off">Off</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>RGB color<br><span class="sub">Used when mode is single color.</span></div>
+                  <div class="color-select">
+                    <div class="color-dot" style="background:#4f46e5" onclick="setRgbColor('#4f46e5')"></div>
+                    <div class="color-dot" style="background:#22c55e" onclick="setRgbColor('#22c55e')"></div>
+                    <div class="color-dot" style="background:#06b6d4" onclick="setRgbColor('#06b6d4')"></div>
+                    <div class="color-dot" style="background:#f97316" onclick="setRgbColor('#f97316')"></div>
+                    <div class="color-dot" style="background:#ec4899" onclick="setRgbColor('#ec4899')"></div>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div>Hide viewer<br><span class="sub">Hide the right‑side viewer for a compact list.</span></div>
+                  <div class="toggle" id="toggleViewer" onclick="toggleViewer(this)"><div class="toggle-knob"></div></div>
+                </div>
+                <div class="setting-row">
+                  <div>Reset layout<br><span class="sub">Reset theme and viewer settings.</span></div>
+                  <button style="font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid #111827;background:#020617;color:#e5e7eb;cursor:pointer;"
+                          onclick="resetSettings()">Reset</button>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <!-- Settings section -->
-        <div id="settingsSection" class="hidden">
-          <div class="card-header">
-            <strong>Settings</strong>
-            <span>Only affects how this page looks for you.</span>
-          </div>
-          <div class="settings-list">
-            <div class="setting-row">
-              <div>Dark mode<br><span class="sub">Toggle between dark and light background.</span></div>
-              <div class="toggle" id="toggleDark" onclick="toggleDark(this)"><div class="toggle-knob"></div></div>
-            </div>
-            <div class="setting-row">
-              <div>Hide viewer<br><span class="sub">Hide the right‑side viewer for a compact list.</span></div>
-              <div class="toggle" id="toggleViewer" onclick="toggleViewer(this)"><div class="toggle-knob"></div></div>
-            </div>
-            <div class="setting-row">
-              <div>Reset layout<br><span class="sub">Reset theme and viewer settings.</span></div>
-              <button style="font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid #111827;background:#020617;color:#e5e7eb;cursor:pointer;"
-                      onclick="resetSettings()">Reset</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
+        <footer>
+          VORTEX Hub • Built‑in games + external games + RGB frame. Edit <code>index.html</code> to add more.
+        </footer>
+      </main>
     </div>
-  </main>
-
-  <footer>
-    VORTEX Hub • All games and apps run inside this page. Edit <code>index.html</code> to add more.
-  </footer>
+  </div>
 
   <script>
-    // ---------- BUILT‑IN GAME PAGES (all work) ----------
     const gamePages = {
       clicker: `
         <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
@@ -549,7 +675,6 @@
       `
     };
 
-    // ---------- BUILT‑IN APPS ----------
     const appPages = {
       notes: `
         <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;padding:8px;">
@@ -568,38 +693,163 @@
       calc: `
         <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
         <h3>Calculator</h3>
-        <input id="a" type="number" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
-        <input id="b" type="number" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <input id="a" type="number" placeholder="First" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <input id="b" type="number" placeholder="Second" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
         <button id="add" style="margin:4px;padding:6px 12px;border-radius:6px;border:none;background:#22c55e;color:#020617;cursor:pointer;">Add</button>
         <div id="r" style="margin-top:6px;">Result: 0</div>
         <script>add.onclick=()=>{r.textContent='Result: '+(Number(a.value||0)+Number(b.value||0));};<\/script>
         </body></html>
+      `,
+      todo: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;padding:8px;">
+        <h3>To‑do list</h3>
+        <input id="in" placeholder="New task" style="width:70%;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <button id="add" style="padding:4px 8px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Add</button>
+        <ul id="list" style="margin-top:8px;padding-left:18px;font-size:14px;"></ul>
+        <script>
+          add.onclick=()=>{const v=in.value.trim();if(!v)return;const li=document.createElement('li');li.textContent=v;li.onclick=()=>li.remove();list.appendChild(li);in.value='';};
+        <\/script>
+        </body></html>
+      `,
+      stopwatch: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Stopwatch</h3>
+        <div id="time" style="font-size:32px;margin:8px;">0.0</div>
+        <button id="btn" style="padding:6px 12px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Start</button>
+        <button id="reset" style="padding:6px 12px;border-radius:6px;border:none;background:#6b7280;color:white;cursor:pointer;margin-top:4px;">Reset</button>
+        <script>
+          let t=0,run=false;
+          setInterval(()=>{if(run){t+=0.1;time.textContent=t.toFixed(1);}},100);
+          btn.onclick=()=>{run=!run;btn.textContent=run?'Pause':'Start';};
+          reset.onclick=()=>{t=0;time.textContent='0.0';};
+        <\/script>
+        </body></html>
+      `,
+      counter: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Counter</h3>
+        <div id="v" style="font-size:32px;margin:8px;">0</div>
+        <div>
+          <button id="minus" style="padding:6px 10px;border-radius:6px;border:none;background:#ef4444;color:white;cursor:pointer;margin-right:4px;">-</button>
+          <button id="plus" style="padding:6px 10px;border-radius:6px;border:none;background:#22c55e;color:#020617;cursor:pointer;">+</button>
+        </div>
+        <script>
+          let n=0;plus.onclick=()=>{n++;v.textContent=n;};minus.onclick=()=>{n--;v.textContent=n;};
+        <\/script>
+        </body></html>
+      `,
+      pomodoro: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Pomodoro 25:00</h3>
+        <div id="time" style="font-size:32px;margin:8px;">25:00</div>
+        <button id="btn" style="padding:6px 12px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Start</button>
+        <script>
+          let s=1500,run=false;
+          function draw(){const m=Math.floor(s/60),r=s%60;time.textContent=m+':' + String(r).padStart(2,'0');}
+          setInterval(()=>{if(run&&s>0){s--;draw();}},1000);
+          btn.onclick=()=>{run=!run;btn.textContent=run?'Pause':'Start';};
+          draw();
+        <\/script>
+        </body></html>
+      `,
+      tipcalc: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Tip calculator</h3>
+        <input id="bill" type="number" placeholder="Bill" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <input id="pct" type="number" placeholder="Tip %" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <button id="go" style="margin:4px;padding:6px 12px;border-radius:6px;border:none;background:#22c55e;color:#020617;cursor:pointer;">Calculate</button>
+        <div id="out" style="margin-top:6px;">Tip: 0 • Total: 0</div>
+        <script>
+          go.onclick=()=>{const b=Number(bill.value||0),p=Number(pct.value||0);const tip=b*p/100,total=b+tip;out.textContent='Tip: '+tip.toFixed(2)+' • Total: '+total.toFixed(2);};
+        <\/script>
+        </body></html>
+      `,
+      randompicker: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;padding:8px;">
+        <h3>Random picker</h3>
+        <textarea id="t" placeholder="One item per line" style="width:100%;height:60%;background:#020617;color:#e5e7eb;border:1px solid #4b5563;border-radius:6px;padding:6px;"></textarea>
+        <button id="pick" style="margin-top:6px;padding:6px 12px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Pick</button>
+        <div id="out" style="margin-top:6px;">Result: —</div>
+        <script>
+          pick.onclick=()=>{const items=t.value.split(/\\n+/).map(x=>x.trim()).filter(Boolean);if(!items.length){out.textContent='Result: —';return;}const i=Math.floor(Math.random()*items.length);out.textContent='Result: '+items[i];};
+        <\/script>
+        </body></html>
+      `,
+      passwordgen: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Password generator</h3>
+        <input id="len" type="number" value="12" style="margin:4px;padding:4px;border-radius:6px;border:1px solid #4b5563;background:#020617;color:#e5e7eb;">
+        <button id="go" style="margin:4px;padding:6px 12px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Generate</button>
+        <div id="out" style="margin-top:6px;word-break:break-all;">••••••••••••</div>
+        <script>
+          const chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+          go.onclick=()=>{let n=Number(len.value||12);if(n<4)n=4;if(n>40)n=40;let s='';for(let i=0;i<n;i++)s+=chars[Math.floor(Math.random()*chars.length)];out.textContent=s;};
+        <\/script>
+        </body></html>
+      `,
+      colorpicker: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Color picker</h3>
+        <input id="c" type="color" value="#4f46e5" style="margin:8px;width:80px;height:40px;border:none;">
+        <div id="hex">#4f46e5</div>
+        <script>c.oninput=()=>{hex.textContent=c.value;};<\/script>
+        </body></html>
+      `,
+      clock: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;">
+        <h3>Clock</h3>
+        <div id="t" style="font-size:32px;margin:8px;"></div>
+        <script>function tick(){const d=new Date();t.textContent=d.toLocaleTimeString();}tick();setInterval(tick,1000);<\/script>
+        </body></html>
+      `,
+      textcleaner: `
+        <!DOCTYPE html><html><body style="margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;padding:8px;">
+        <h3>Text cleaner</h3>
+        <textarea id="t" placeholder="Paste text here" style="width:100%;height:60%;background:#020617;color:#e5e7eb;border:1px solid #4b5563;border-radius:6px;padding:6px;"></textarea>
+        <button id="clean" style="margin-top:6px;padding:6px 12px;border-radius:6px;border:none;background:#4f46e5;color:white;cursor:pointer;">Trim + remove extra spaces</button>
+        <script>clean.onclick=()=>{t.value=t.value.split('\\n').map(l=>l.trim()).join('\\n');};<\/script>
+        </body></html>
       `
     };
 
-    // ---------- DATA ----------
     const games = [
-      {id:"g-clicker", name:"Clicker Demo", desc:"Simple clicker that always works.", key:"clicker", tag:"Built‑in", thumbClass:""},
-      {id:"g-dodge", name:"Square Dodge", desc:"Dodge the red square.", key:"dodge", tag:"Built‑in", thumbClass:"alt1"},
-      {id:"g-pong", name:"Mini Pong", desc:"Tiny pong clone.", key:"pong", tag:"Built‑in", thumbClass:"alt2"},
-      {id:"g-snake", name:"Snake Demo", desc:"Classic snake style.", key:"snake", tag:"Built‑in", thumbClass:"alt3"},
-      {id:"g-tetris", name:"Tetris‑style Demo", desc:"Simple falling block demo.", key:"tetris", tag:"Built‑in", thumbClass:""},
-      {id:"g-2048", name:"2048‑style Demo", desc:"Tile demo inspired by 2048.", key:"g2048", tag:"Built‑in", thumbClass:"alt1"},
-      // extra slots (names only, still "working" as placeholders)
+      {id:"g-clicker", name:"Clicker Demo", desc:"Simple clicker that always works.", key:"clicker", tag:"Built‑in", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Clicker"},
+      {id:"g-dodge", name:"Square Dodge", desc:"Dodge the red square.", key:"dodge", tag:"Built‑in", thumbClass:"alt1", img:"https://via.placeholder.com/160x90.png?text=Dodge"},
+      {id:"g-pong", name:"Mini Pong", desc:"Tiny pong clone.", key:"pong", tag:"Built‑in", thumbClass:"alt2", img:"https://via.placeholder.com/160x90.png?text=Pong"},
+      {id:"g-snake", name:"Snake Demo", desc:"Classic snake style.", key:"snake", tag:"Built‑in", thumbClass:"alt3", img:"https://via.placeholder.com/160x90.png?text=Snake"},
+      {id:"g-tetris", name:"Tetris‑style Demo", desc:"Simple falling block demo.", key:"tetris", tag:"Built‑in", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Tetris"},
+      {id:"g-2048", name:"2048‑style Demo", desc:"Tile demo inspired by 2048.", key:"g2048", tag:"Built‑in", thumbClass:"alt1", img:"https://via.placeholder.com/160x90.png?text=2048"},
+
+      {id:"g-ext-slope", name:"Slope (external)", desc:"Example external HTML5 game.", key:null, tag:"External", thumbClass:"alt2", img:"https://via.placeholder.com/160x90.png?text=Slope", external:"https://example.com/slope"},
+      {id:"g-ext-run3", name:"Run 3 (external)", desc:"Example external HTML5 game.", key:null, tag:"External", thumbClass:"alt3", img:"https://via.placeholder.com/160x90.png?text=Run+3", external:"https://example.com/run3"},
+      {id:"g-ext-2048real", name:"2048 (external)", desc:"Real 2048 site.", key:null, tag:"External", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=2048+Real", external:"https://play2048.co"},
+
       {id:"g-slot1", name:"Vortex Game Slot 1", desc:"Edit index.html later to point this to a real game.", key:null, tag:"Slot", thumbClass:"alt2"},
       {id:"g-slot2", name:"Vortex Game Slot 2", desc:"Extra slot for future game.", key:null, tag:"Slot", thumbClass:"alt3"},
-      {id:"g-slot3", name:"Vortex Game Slot 3", desc:"Extra slot for future game.", key:null, tag:"Slot", thumbClass:""}
+      {id:"g-slot3", name:"Vortex Game Slot 3", desc:"Extra slot for future game.", key:null, tag:"Slot", thumbClass:""},
+      {id:"g-slot4", name:"Vortex Game Slot 4", desc:"Extra slot for future game.", key:null, tag:"Slot", thumbClass:"alt1"},
+      {id:"g-slot5", name:"Vortex Game Slot 5", desc:"Extra slot for future game.", key:null, tag:"Slot", thumbClass:"alt2"}
     ];
 
     const apps = [
-      {id:"a-notes", name:"Notes", desc:"Simple notes app.", key:"notes", tag:"Built‑in", thumbClass:""},
-      {id:"a-timer", name:"Timer", desc:"Start / pause timer.", key:"timer", tag:"Built‑in", thumbClass:"alt1"},
-      {id:"a-calc", name:"Calculator", desc:"Add two numbers.", key:"calc", tag:"Built‑in", thumbClass:"alt2"},
-      {id:"a-slot1", name:"Vortex Tool Slot 1", desc:"Placeholder for future tool.", key:null, tag:"Slot", thumbClass:"alt3"}
+      {id:"a-notes", name:"Notes", desc:"Simple notes app.", key:"notes", tag:"Utility", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Notes"},
+      {id:"a-timer", name:"Timer", desc:"Count up seconds.", key:"timer", tag:"Utility", thumbClass:"alt1", img:"https://via.placeholder.com/160x90.png?text=Timer"},
+      {id:"a-calc", name:"Calculator", desc:"Add two numbers.", key:"calc", tag:"Utility", thumbClass:"alt2", img:"https://via.placeholder.com/160x90.png?text=Calc"},
+      {id:"a-todo", name:"To‑do list", desc:"Click items to remove them.", key:"todo", tag:"Productivity", thumbClass:"alt3", img:"https://via.placeholder.com/160x90.png?text=To-do"},
+      {id:"a-stopwatch", name:"Stopwatch", desc:"Start / pause / reset.", key:"stopwatch", tag:"Utility", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Stopwatch"},
+      {id:"a-counter", name:"Counter", desc:"Simple + / - counter.", key:"counter", tag:"Utility", thumbClass:"alt1", img:"https://via.placeholder.com/160x90.png?text=Counter"},
+      {id:"a-pomodoro", name:"Pomodoro", desc:"25‑minute focus timer.", key:"pomodoro", tag:"Productivity", thumbClass:"alt2", img:"https://via.placeholder.com/160x90.png?text=Pomodoro"},
+      {id:"a-tip", name:"Tip calculator", desc:"Bill + tip %.", key:"tipcalc", tag:"Utility", thumbClass:"alt3", img:"https://via.placeholder.com/160x90.png?text=Tip"},
+      {id:"a-random", name:"Random picker", desc:"Pick a random line.", key:"randompicker", tag:"Fun", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Random"},
+      {id:"a-pass", name:"Password generator", desc:"Random strong passwords.", key:"passwordgen", tag:"Utility", thumbClass:"alt1", img:"https://via.placeholder.com/160x90.png?text=Password"},
+      {id:"a-color", name:"Color picker", desc:"Pick a hex color.", key:"colorpicker", tag:"Design", thumbClass:"alt2", img:"https://via.placeholder.com/160x90.png?text=Color"},
+      {id:"a-clock", name:"Clock", desc:"Live digital clock.", key:"clock", tag:"Utility", thumbClass:"alt3", img:"https://via.placeholder.com/160x90.png?text=Clock"},
+      {id:"a-clean", name:"Text cleaner", desc:"Trim lines & spaces.", key:"textcleaner", tag:"Utility", thumbClass:"", img:"https://via.placeholder.com/160x90.png?text=Clean"}
     ];
 
     let currentTab = "games";
     let searchQuery = "";
+    let currentExternal = null;
 
     const gameListEl = document.getElementById("gameList");
     const appListEl = document.getElementById("appList");
@@ -615,17 +865,18 @@
     const viewerSection = document.getElementById("viewerSection");
     const aiSection = document.getElementById("aiSection");
     const settingsSection = document.getElementById("settingsSection");
-    const listCard = document.getElementById("listCard");
     const viewerCard = document.getElementById("viewerCard");
     const aiLog = document.getElementById("aiLog");
     const aiInput = document.getElementById("aiInput");
+    const rgbBorder = document.getElementById("rgbBorder");
+    const rgbModeSelect = document.getElementById("rgbModeSelect");
 
     function renderLists(){
       gameListEl.innerHTML = "";
       appListEl.innerHTML = "";
       const q = searchQuery.toLowerCase();
 
-      games.forEach((g,i)=>{
+      games.forEach(g=>{
         if(q && !g.name.toLowerCase().includes(q) && !g.desc.toLowerCase().includes(q)) return;
         const card = document.createElement("button");
         card.type = "button";
@@ -633,7 +884,14 @@
         card.onclick = () => loadGame(g);
         const thumb = document.createElement("div");
         thumb.className = "thumb " + (g.thumbClass||"");
-        thumb.textContent = g.name.split(" ")[0];
+        if (g.img) {
+          thumb.style.backgroundImage = "url('" + g.img + "')";
+          thumb.style.backgroundSize = "cover";
+          thumb.style.backgroundPosition = "center";
+          thumb.textContent = "";
+        } else {
+          thumb.textContent = g.name.split(" ")[0];
+        }
         const meta = document.createElement("div");
         meta.className = "meta";
         const title = document.createElement("div");
@@ -660,7 +918,14 @@
         card.onclick = () => loadApp(a);
         const thumb = document.createElement("div");
         thumb.className = "thumb " + (a.thumbClass||"");
-        thumb.textContent = a.name.split(" ")[0];
+        if (a.img) {
+          thumb.style.backgroundImage = "url('" + a.img + "')";
+          thumb.style.backgroundSize = "cover";
+          thumb.style.backgroundPosition = "center";
+          thumb.textContent = "";
+        } else {
+          thumb.textContent = a.name.split(" ")[0];
+        }
         const meta = document.createElement("div");
         meta.className = "meta";
         const title = document.createElement("div");
@@ -694,7 +959,7 @@
         pageTitle.textContent = "Games";
         pageSubtitle.textContent = "Browse and launch games directly inside this page.";
         listTitle.textContent = "Game library";
-        listSubtitle.textContent = "Built‑in demos + extra slots.";
+        listSubtitle.textContent = "Built‑in demos + external games + slots.";
         gameListEl.classList.remove("hidden");
         appListEl.classList.add("hidden");
         viewerSection.classList.remove("hidden");
@@ -724,7 +989,7 @@
         pageTitle.textContent = "Settings";
         pageSubtitle.textContent = "Adjust how VORTEX looks and behaves.";
         listTitle.textContent = "Layout";
-        listSubtitle.textContent = "Theme and viewer options.";
+        listSubtitle.textContent = "RGB + viewer options.";
         gameListEl.classList.add("hidden");
         appListEl.classList.add("hidden");
         viewerSection.classList.add("hidden");
@@ -741,8 +1006,12 @@
       viewerPlaceholder.style.display = "none";
       viewerFrame.src = "";
       viewerFrame.srcdoc = "";
+      currentExternal = g.external || null;
+
       if(g.key && gamePages[g.key]){
         viewerFrame.srcdoc = gamePages[g.key];
+      } else if (g.external){
+        viewerFrame.srcdoc = "<!DOCTYPE html><html><body style='margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100%;text-align:center;padding:10px;'><p>This is an external game.<br>Use the ↗ Open button above to launch it in a new tab.<br>Some sites may block embedding.</p></body></html>";
       } else {
         viewerFrame.srcdoc = "<!DOCTYPE html><html><body style='margin:0;background:#020617;color:#e5e7eb;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100%;'><p>This is a placeholder slot. Edit index.html to point this to a real game.</p></body></html>";
       }
@@ -755,6 +1024,7 @@
       viewerPlaceholder.style.display = "none";
       viewerFrame.src = "";
       viewerFrame.srcdoc = "";
+      currentExternal = null;
       if(a.key && appPages[a.key]){
         viewerFrame.srcdoc = appPages[a.key];
       } else {
@@ -762,27 +1032,52 @@
       }
     }
 
-    // SETTINGS
-    function toggleDark(el){
-      el.classList.toggle("on");
-      const on = el.classList.contains("on");
-      document.body.style.background = on ? "#f9fafb" : "#020617";
-      document.body.style.color = on ? "#020617" : "#e5e7eb";
+    function fullscreenViewer(){
+      const el = viewerFrame;
+      if(el.requestFullscreen){
+        el.requestFullscreen();
+      }else if(el.webkitRequestFullscreen){
+        el.webkitRequestFullscreen();
+      }else if(el.msRequestFullscreen){
+        el.msRequestFullscreen();
+      }
     }
+
+    function openExternal(){
+      if(currentExternal){
+        window.open(currentExternal, "_blank");
+      }
+    }
+
     function toggleViewer(el){
       el.classList.toggle("on");
       const hide = el.classList.contains("on");
       viewerCard.style.display = hide ? "none" : "flex";
     }
+
     function resetSettings(){
-      document.getElementById("toggleDark").classList.remove("on");
+      rgbModeSelect.value = "rainbow";
+      changeRgbMode("rainbow");
+      document.documentElement.style.setProperty("--rgb-color", "#4f46e5");
       document.getElementById("toggleViewer").classList.remove("on");
-      document.body.style.background = "#020617";
-      document.body.style.color = "#e5e7eb";
       viewerCard.style.display = "flex";
     }
 
-    // AI
+    function changeRgbMode(mode){
+      document.documentElement.style.setProperty("--rgb-mode", mode);
+      rgbBorder.classList.remove("single","off");
+      if(mode === "single") rgbBorder.classList.add("single");
+      if(mode === "off") rgbBorder.classList.add("off");
+    }
+
+    function setRgbColor(color){
+      document.documentElement.style.setProperty("--rgb-color", color);
+      if(document.documentElement.style.getPropertyValue("--rgb-mode") !== "single"){
+        rgbModeSelect.value = "single";
+        changeRgbMode("single");
+      }
+    }
+
     function addAIMessage(text, who){
       const div = document.createElement("div");
       div.className = "ai-msg " + who;
@@ -790,22 +1085,42 @@
       aiLog.appendChild(div);
       aiLog.scrollTop = aiLog.scrollHeight;
     }
+
     function sendAI(){
       const q = aiInput.value.trim();
       if(!q) return;
       addAIMessage(q, "me");
       aiInput.value = "";
+
       const lower = q.toLowerCase();
-      let reply = "I'm a simple on‑page AI. I can't browse the web, but I can explain how this hub works.";
-      if(lower.includes("game")) reply = "Use the Games tab. The first few games are fully built‑in and always work.";
-      else if(lower.includes("app")) reply = "Use the Apps tab. Notes, Timer, and Calculator are real working demos.";
-      else if(lower.includes("school")) reply = "This is just a static page. Whether it’s blocked depends on your school filters.";
-      else if(lower.includes("help")) reply = "Tabs on the left: Games, Apps, AI, Settings. Search filters items live.";
+      let reply;
+
+      if(lower.includes("how") && lower.includes("add") && lower.includes("game")){
+        reply = "To add a game, edit index.html, find the games array, and add a new object with name, desc, and either a built‑in key or an external URL.";
+      } else if(lower.includes("fullscreen")){
+        reply = "Use the ⛶ Fullscreen button above the viewer to fullscreen the current game iframe.";
+      } else if(lower.includes("rgb") || lower.includes("color")){
+        reply = "Open the Settings tab. You can switch RGB mode (rainbow / single / off) and pick a color for single mode.";
+      } else if(lower.includes("apps") || lower.includes("tools")){
+        reply = "The Apps tab has working tools: notes, timer, calculator, to‑do, stopwatch, pomodoro, random picker, password generator, and more.";
+      } else if(lower.includes("games")){
+        reply = "The Games tab mixes built‑in demos that always work and external games that open in a new tab with the ↗ button.";
+      } else if(lower.includes("school") || lower.includes("blocked")){
+        reply = "This is just a static page. Whether it works at school depends on what your network blocks.";
+      } else if(lower.includes("help") || lower.includes("what can you do")){
+        reply = "I can explain how this hub works, where to click, and how to add more games/apps by editing index.html.";
+      } else {
+        reply = "I’m a small on‑page helper, not a full AI like this chat, but I can guide you around VORTEX and explain how to edit the file.";
+      }
+
       setTimeout(()=>addAIMessage(reply,"bot"),200);
     }
 
-    // INIT
     renderLists();
+    if (games[0]) {
+      loadGame(games[0]);
+    }
+    changeRgbMode("rainbow");
   </script>
 </body>
 </html>
