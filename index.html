@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Game Hub</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #222;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #games {
+      padding: 20px;
+    }
+    .game {
+      background: #1e1e1e;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid #333;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      display: none;
+    }
+  </style>
+</head>
+<body>
 
+<header>My Free Game Hub</header>
+
+<div id="games">
+  <div class="game" onclick="loadGame('https://example.com/game1')">
+    Game 1 (Embed)
+  </div>
+
+  <div class="game" onclick="loadGame('https://example.com/game2')">
+    Game 2 (Embed)
+  </div>
+
+  <div class="game" onclick="loadGame('https://example.com/game3')">
+    Game 3 (Embed)
+  </div>
+</div>
+
+<iframe id="frame"></iframe>
+
+<script>
+  function loadGame(url) {
+    const frame = document.getElementById("frame");
+    frame.src = url;
+    frame.style.display = "block";
+    window.scrollTo(0, frame.offsetTop);
+  }
+</script>
+
+</body>
+</html>
