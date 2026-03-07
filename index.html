@@ -78,14 +78,8 @@
     padding: 10px;
     font-size: 16px;
   }
-  #viewerFrame {
-    flex: 1;
-    width: 100%;
-    border: none;
-    background: black;
-  }
   .ai-panel {
-    height: 190px;
+    height: 220px;
     background: #141422;
     border-top: 1px solid #222;
     display: flex;
@@ -125,6 +119,11 @@
     border-radius: 4px;
     cursor: pointer;
   }
+  .hint {
+    padding: 0 10px 6px;
+    font-size: 12px;
+    color: #aaa;
+  }
 </style>
 </head>
 
@@ -138,15 +137,16 @@
 <div class="container">
   <div class="sidebar">
     <h2>Games</h2>
+    <div class="hint">Click to open in a new tab.</div>
     <div class="list"><ul id="gameList"></ul></div>
 
     <h2>Apps</h2>
+    <div class="hint">Tools & utilities (new tab).</div>
     <div class="list"><ul id="appList"></ul></div>
   </div>
 
   <div class="main">
-    <div id="viewerTitle">Select something to load</div>
-    <iframe id="viewerFrame"></iframe>
+    <div id="viewerTitle">VORTEX Hub • Select a game or app</div>
 
     <div class="ai-panel">
       <div id="aiChat"></div>
@@ -160,7 +160,7 @@
 
 <script>
 // =========================
-// 30+ WORKING GAMES
+// GAMES (open in new tab)
 // =========================
 
 const games = [
@@ -186,7 +186,7 @@ const games = [
 ];
 
 // =========================
-// 15+ WORKING APPS
+// APPS (open in new tab)
 // =========================
 
 const apps = [
@@ -217,7 +217,7 @@ function renderLists(filteredGames = games, filteredApps = apps) {
     const li = document.createElement("li");
     li.className = "list-item";
     li.textContent = g.title;
-    li.onclick = () => loadGame(g);
+    li.onclick = () => openGame(g);
     gList.appendChild(li);
   });
 
@@ -225,13 +225,13 @@ function renderLists(filteredGames = games, filteredApps = apps) {
     const li = document.createElement("li");
     li.className = "list-item";
     li.textContent = a.title;
-    li.onclick = () => loadApp(a);
+    li.onclick = () => openApp(a);
     aList.appendChild(li);
   });
 }
 
 // =========================
-// SEARCH ENGINE
+// SEARCH
 // =========================
 
 document.getElementById("searchInput").addEventListener("input", () => {
@@ -244,17 +244,17 @@ document.getElementById("searchInput").addEventListener("input", () => {
 });
 
 // =========================
-// LOAD GAME / APP
+// OPEN GAME / APP (NEW TAB)
 // =========================
 
-function loadGame(g) {
-  document.getElementById("viewerTitle").textContent = g.title;
-  document.getElementById("viewerFrame").src = g.url;
+function openGame(g) {
+  document.getElementById("viewerTitle").textContent = "Opened: " + g.title + " (new tab)";
+  window.open(g.url, "_blank");
 }
 
-function loadApp(a) {
-  document.getElementById("viewerTitle").textContent = a.title;
-  document.getElementById("viewerFrame").src = a.url;
+function openApp(a) {
+  document.getElementById("viewerTitle").textContent = "Opened: " + a.title + " (new tab)";
+  window.open(a.url, "_blank");
 }
 
 // =========================
@@ -289,22 +289,22 @@ function handleAI() {
   }
 
   if (lower.includes("help")) {
-    return addAIMessage("Use the left panel to load games or apps. Search filters everything.");
+    return addAIMessage("Click a game or app on the left. It opens in a new tab, like unblocked game sites.");
   }
 
   if (lower.includes("random game")) {
     const g = games[Math.floor(Math.random() * games.length)];
-    loadGame(g);
-    return addAIMessage("Random game loaded: " + g.title);
+    openGame(g);
+    return addAIMessage("Random game opened in a new tab: " + g.title);
   }
 
   if (lower.includes("random app")) {
     const a = apps[Math.floor(Math.random() * apps.length)];
-    loadApp(a);
-    return addAIMessage("Random app loaded: " + a.title);
+    openApp(a);
+    return addAIMessage("Random app opened in a new tab: " + a.title);
   }
 
-  addAIMessage("I can help with games, apps, search, and info. Try asking: 'best game', 'random game', or 'help'.");
+  addAIMessage("I can help with games, apps, search, and info. Try: 'best game', 'random game', or 'help'.");
 }
 
 document.getElementById("aiSend").addEventListener("click", handleAI);
@@ -317,7 +317,7 @@ document.getElementById("aiInput").addEventListener("keydown", e => {
 // =========================
 
 renderLists();
-addAIMessage("Welcome to VORTEX Hub!", "bot");
+addAIMessage("Welcome to VORTEX Hub! Click a game to open it in a new tab.", "bot");
 </script>
 
 </body>
