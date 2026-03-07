@@ -1,43 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VORTEX Hub</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a0a12;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 10;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+  }
+  #searchInput {
+    margin-left: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    width: 260px;
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    margin-top: 50px;
+  }
+  .sidebar {
+    width: 260px;
+    background: #141422;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar h2 {
+    margin: 10px;
+    font-size: 16px;
+  }
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px 10px;
+  }
+  .list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .list-item {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: #1d1d33;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .list-item:hover {
+    background: #2a2a44;
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #viewerTitle {
+    padding: 10px;
+    font-size: 16px;
+  }
+  #viewerFrame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: black;
+  }
+  .ai-panel {
+    height: 190px;
+    background: #141422;
+    border-top: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  #aiChat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    font-size: 13px;
+  }
+  .ai-msg {
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    max-width: 90%;
+  }
+  .ai-bot { background: #1f1f3a; }
+  .ai-user { background: #2b7cff; align-self: flex-end; }
+  .ai-input-row {
+    display: flex;
+    padding: 6px;
+    gap: 6px;
+  }
+  #aiInput {
+    flex: 1;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+  }
+  #aiSend {
+    padding: 6px 10px;
+    border: none;
+    background: #2b7cff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #aiSend:hover {
+    background: #1f5fd1;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>VORTEX Hub</h1>
+  <input id="searchInput" placeholder="Search games & apps...">
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h2>Games</h2>
+    <div class="list"><ul id="gameList"></ul></div>
+
+    <h2>Apps</h2>
+    <div class="list"><ul id="appList"></ul></div>
+  </div>
+
+  <div class="main">
+    <div id="viewerTitle">Select something to load</div>
+    <iframe id="viewerFrame"></iframe>
+
+    <div class="ai-panel">
+      <div id="aiChat"></div>
+      <div class="ai-input-row">
+        <input id="aiInput" placeholder="Ask the VORTEX helper...">
+        <button id="aiSend">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =========================
+// GAMES (PRE-FILLED URLS)
+// =========================
+
 const games = [
   // Arcade / Runners
-  { title: "Slope",              url: "https://example.com/html5/slope/index.html",          category: "Arcade",  tags: ["runner","3d","fast"] },
-  { title: "Run 3",              url: "https://example.com/html5/run3/index.html",           category: "Arcade",  tags: ["runner","space"] },
-  { title: "Tunnel Rush",        url: "https://example.com/html5/tunnelrush/index.html",     category: "Arcade",  tags: ["tunnel","reaction"] },
-  { title: "Subway Surfers",     url: "https://example.com/html5/subway/index.html",         category: "Arcade",  tags: ["runner","3d"] },
-  { title: "Geometry Dash",      url: "https://example.com/html5/geometrydash/index.html",   category: "Arcade",  tags: ["rhythm","hard"] },
+  { title: "Slope",              url: "https://ubg100.github.io/slope/",                     category: "Arcade",  tags: ["runner","3d","fast"] },
+  { title: "Run 3",              url: "https://ubg100.github.io/run-3/",                    category: "Arcade",  tags: ["runner","space"] },
+  { title: "Tunnel Rush",        url: "https://ubg100.github.io/tunnel-rush/",              category: "Arcade",  tags: ["tunnel","reaction"] },
+  { title: "Subway Surfers",     url: "https://ubg100.github.io/subway-surfers/",           category: "Arcade",  tags: ["runner","3d"] },
+  { title: "Geometry Dash",      url: "https://ubg100.github.io/geometry-dash/",            category: "Arcade",  tags: ["rhythm","hard"] },
 
   // Sports
-  { title: "Basketball Stars",   url: "https://example.com/html5/basketballstars/index.html",category: "Sports",  tags: ["basketball","2-player"] },
-  { title: "Retro Bowl",         url: "https://example.com/html5/retrobowl/index.html",      category: "Sports",  tags: ["football","retro"] },
-  { title: "Soccer Skills",      url: "https://example.com/html5/soccerskills/index.html",   category: "Sports",  tags: ["soccer"] },
+  { title: "Basketball Stars",   url: "https://ubg100.github.io/basketball-stars/",         category: "Sports",  tags: ["basketball","2-player"] },
+  { title: "Retro Bowl",         url: "https://ubg100.github.io/retro-bowl/",               category: "Sports",  tags: ["football","retro"] },
+  { title: "Soccer Skills",      url: "https://ubg100.github.io/soccer-skills-euro-cup/",   category: "Sports",  tags: ["soccer"] },
 
   // Racing
-  { title: "Moto X3M",           url: "https://example.com/html5/motox3m/index.html",        category: "Racing",  tags: ["bike","stunts"] },
-  { title: "Drift Hunters",      url: "https://example.com/html5/drifthunters/index.html",   category: "Racing",  tags: ["cars","drift"] },
-  { title: "Madalin Stunt Cars", url: "https://example.com/html5/madalin/index.html",        category: "Racing",  tags: ["cars","stunts"] },
+  { title: "Moto X3M",           url: "https://ubg100.github.io/moto-x3m/",                 category: "Racing",  tags: ["bike","stunts"] },
+  { title: "Drift Hunters",      url: "https://ubg100.github.io/drift-hunters/",            category: "Racing",  tags: ["cars","drift"] },
+  { title: "Madalin Stunt Cars 2", url: "https://ubg100.github.io/madalin-stunt-cars-2/",   category: "Racing",  tags: ["cars","stunts"] },
 
   // Shooters / Action
-  { title: "1v1.lol Clone",      url: "https://example.com/html5/1v1/index.html",            category: "Shooter", tags: ["fps","build"] },
-  { title: "Shell Shockers",     url: "https://example.com/html5/shellshockers/index.html",  category: "Shooter", tags: ["fps","eggs"] },
-  { title: "Krunker.io Clone",   url: "https://example.com/html5/krunker/index.html",        category: "Shooter", tags: ["fps","online"] },
+  { title: "1v1.lol",            url: "https://ubg100.github.io/1v1-lol/",                  category: "Shooter", tags: ["fps","build"] },
+  { title: "Shell Shockers",     url: "https://ubg100.github.io/shell-shockers/",           category: "Shooter", tags: ["fps","eggs"] },
+  { title: "Krunker.io",         url: "https://ubg100.github.io/krunker-io/",               category: "Shooter", tags: ["fps","online"] },
 
   // Puzzle / Logic
-  { title: "2048",               url: "https://example.com/html5/2048/index.html",           category: "Puzzle",  tags: ["numbers","logic"] },
-  { title: "Cut the Rope",       url: "https://example.com/html5/cuttherope/index.html",     category: "Puzzle",  tags: ["physics"] },
-  { title: "Where’s My Water?",  url: "https://example.com/html5/wheresmywater/index.html",  category: "Puzzle",  tags: ["physics","water"] },
+  { title: "2048",               url: "https://ubg100.github.io/2048/",                     category: "Puzzle",  tags: ["numbers","logic"] },
+  { title: "Cut the Rope",       url: "https://ubg100.github.io/cut-the-rope/",             category: "Puzzle",  tags: ["physics"] },
+  { title: "Where’s My Water?",  url: "https://ubg100.github.io/wheres-my-water/",          category: "Puzzle",  tags: ["physics","water"] },
 
   // Platformers
-  { title: "Fireboy & Watergirl",url: "https://example.com/html5/fireboywatergirl/index.html",category: "Platformer",tags:["co-op","puzzle"] },
-  { title: "Super Mario Clone",  url: "https://example.com/html5/mario/index.html",          category: "Platformer",tags:["classic"] },
+  { title: "Fireboy & Watergirl",url: "https://ubg100.github.io/fireboy-and-watergirl-forest-temple/", category: "Platformer", tags:["co-op","puzzle"] },
+  { title: "Super Mario Flash",  url: "https://ubg100.github.io/super-mario-flash/",        category: "Platformer", tags:["classic"] },
 
   // Idle / Clicker
-  { title: "Cookie Clicker Clone",url:"https://example.com/html5/cookieclicker/index.html",  category: "Idle",    tags:["clicker","idle"] },
-  { title: "Idle Breakout",      url: "https://example.com/html5/idlebreakout/index.html",   category: "Idle",    tags:["bricks","idle"] },
+  { title: "Cookie Clicker",     url: "https://ubg100.github.io/cookie-clicker/",           category: "Idle",    tags:["clicker","idle"] },
+  { title: "Idle Breakout",      url: "https://ubg100.github.io/idle-breakout/",            category: "Idle",    tags:["bricks","idle"] },
 
   // Sandbox / Misc
-  { title: "Sandbox Physics",    url: "https://example.com/html5/sandbox/index.html",        category: "Sandbox", tags:["physics","sandbox"] },
-  { title: "Stickman Hook",      url: "https://example.com/html5/stickmanhook/index.html",   category: "Arcade",  tags:["swing","physics"] },
+  { title: "Sandbox Physics",    url: "https://ubg100.github.io/sandbox-city-cars-simulator/", category: "Sandbox", tags:["physics","sandbox"] },
+  { title: "Stickman Hook",      url: "https://ubg100.github.io/stickman-hook/",            category: "Arcade",  tags:["swing","physics"] },
 
-  // 👉 COPY THESE LINES AND KEEP ADDING MORE GAMES IN THIS FORMAT
-  // { title: "Game Name", url: "https://your-school-safe-domain/path/game.html", category: "Category", tags: ["tag1","tag2"] },
+  // You can keep adding more in this same format.
 ];
+
+// =========================
+// APPS (PRE-FILLED URLS)
+// =========================
+
+const apps = [
+  { title: "Scientific Calculator", url: "https://www.desmos.com/scientific",   category: "Tools",        tags: ["math","calculator"] },
+  { title: "Graphing Calculator",   url: "https://www.desmos.com/calculator",   category: "Tools",        tags: ["math","graph"] },
+  { title: "Online Notepad",        url: "https://anotepad.com/",               category: "Productivity", tags: ["notes","text"] },
+  { title: "Markdown Editor",       url: "https://stackedit.io/app#",           category: "Productivity", tags: ["writing","markdown"] },
+  { title: "Pixel Art Editor",      url: "https://www.pixilart.com/draw",       category: "Creative",     tags: ["drawing","pixels"] },
+  { title: "JS Playground",         url: "https://jsfiddle.net/",               category: "Coding",       tags: ["code","js"] },
+  { title: "HTML Playground",       url: "https://codepen.io/pen/",             category: "Coding",       tags: ["html","css","js"] },
+  { title: "Music Maker",           url: "https://onlinesequencer.net/",        category: "Creative",     tags: ["music","loops"] },
+  { title: "Timer & Stopwatch",     url: "https://timer.onlineclock.net/",      category: "Tools",        tags: ["timer","clock"] },
+  { title: "Unit Converter",        url: "https://www.unitconverters.net/",     category: "Tools",        tags: ["convert","units"] }
+];
+
+// =========================
+// RENDER LISTS
+// =========================
+
+function renderLists(filteredGames = null, filteredApps = null) {
+  const gList = document.getElementById("gameList");
+  const aList = document.getElementById("appList");
+  gList.innerHTML = "";
+  aList.innerHTML = "";
+
+  const g = filteredGames || games;
+  const a = filteredApps || apps;
+
+  g.forEach(game => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = game.title;
+    li.onclick = () => loadGame(game);
+    gList.appendChild(li);
+  });
+
+  a.forEach(app => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = app.title;
+    li.onclick = () => loadApp(app);
+    aList.appendChild(li);
+  });
+}
+
+// =========================
+// LOAD GAME / APP
+// =========================
+
+function loadGame(g) {
+  document.getElementById("viewerTitle").textContent = g.title + " (Game)";
+  document.getElementById("viewerFrame").src = g.url;
+}
+
+function loadApp(a) {
+  document.getElementById("viewerTitle").textContent = a.title + " (App)";
+  document.getElementById("viewerFrame").src = a.url;
+}
+
+// =========================
+// SEARCH
+// =========================
+
+function setupSearch() {
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) {
+      renderLists();
+      return;
+    }
+
+    const filteredGames = games.filter(g =>
+      g.title.toLowerCase().includes(q) ||
+      g.category.toLowerCase().includes(q) ||
+      (g.tags && g.tags.some(t => t.toLowerCase().includes(q)))
+    );
+
+    const filteredApps = apps.filter(a =>
+      a.title.toLowerCase().includes(q) ||
+      a.category.toLowerCase().includes(q) ||
+      (a.tags && a.tags.some(t => t.toLowerCase().includes(q)))
+    );
+
+    renderLists(filteredGames, filteredApps);
+  });
+}
+
+// =========================
+// AI HELPER
+// =========================
+
+function addAIMessage(text, who="bot") {
+  const chat = document.getElementById("aiChat");
+  const msg = document.createElement("div");
+  msg.className = "ai-msg " + (who === "user" ? "ai-user" : "ai-bot");
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function handleAI() {
+  const input = document.getElementById("aiInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addAIMessage(text, "user");
+  input.value = "";
+
+  const lower = text.toLowerCase();
+  let reply = "";
+
+  if (lower.includes("hi") || lower.includes("hello")) {
+    reply = "Hey! I’m the VORTEX helper. Pick a game or app on the left, or search by name or category.";
+  } else if (lower.includes("best") && lower.includes("game")) {
+    reply = "Popular picks: Slope, Run 3, Moto X3M, Retro Bowl, and 1v1.lol. Click them in the list to load.";
+  } else if (lower.includes("school") || lower.includes("blocked")) {
+    reply = "If something is blocked at school, try another game or app. You can also swap URLs in the code later.";
+  } else if (lower.includes("search")) {
+    reply = "Use the search bar at the top. It filters both games and apps by title, category, and tags.";
+  } else if (lower.includes("add") && lower.includes("game")) {
+    reply = "To add more games, copy one of the game objects in the games array and change the title/url.";
+  } else if (lower.includes("add") && lower.includes("app")) {
+    reply = "To add more apps, copy one of the app objects in the apps array and change the title/url.";
+  } else if (lower.includes("help") || lower.includes("what can you do")) {
+    reply = "I can explain how this hub works, how search works, and how to add or organize games and apps.";
+  } else {
+    reply = "I’m a small on-page helper. Try asking about games, apps, search, or how to add more content.";
+  }
+
+  setTimeout(() => addAIMessage(reply, "bot"), 200);
+}
+
+function setupAI() {
+  const btn = document.getElementById("aiSend");
+  const input = document.getElementById("aiInput");
+
+  btn.addEventListener("click", handleAI);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAI();
+    }
+  });
+
+  addAIMessage("Welcome to VORTEX Hub. Pick a game or app on the left, or ask me how things work.", "bot");
+}
+
+// =========================
+// INIT
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderLists();
+  setupSearch();
+  setupAI();
+  if (games[0]) loadGame(games[0]);
+});
+</script>
+
+</body>
+</html>
