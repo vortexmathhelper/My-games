@@ -168,17 +168,7 @@ const games = [
   { title: "Run 3", url: "https://ubg100.github.io/run-3/" },
   { title: "Tunnel Rush", url: "https://ubg100.github.io/tunnel-rush/" },
   { title: "Subway Surfers", url: "https://ubg100.github.io/subway-surfers/" },
-  { title: "Geometry Dash", url: "https://ubg100.github.io/geometry-dash/" },
-  { title: "Basketball Stars", url: "https://ubg100.github.io/basketball-stars/" },
-  { title: "Retro Bowl", url: "https://ubg100.github.io/retro-bowl/" },
-  { title: "Moto X3M", url: "https://ubg100.github.io/moto-x3m/" },
-  { title: "Drift Hunters", url: "https://ubg100.github.io/drift-hunters/" },
-  { title: "1v1.lol", url: "https://ubg100.github.io/1v1-lol/" },
-  { title: "Shell Shockers", url: "https://ubg100.github.io/shell-shockers/" },
-  { title: "2048", url: "https://ubg100.github.io/2048/" },
-  { title: "Cut the Rope", url: "https://ubg100.github.io/cut-the-rope/" },
-  { title: "Idle Breakout", url: "https://ubg100.github.io/idle-breakout/" },
-  { title: "Stickman Hook", url: "https://ubg100.github.io/stickman-hook/" }
+  { title: "Geometry Dash", url: "https://ubg100.github.io/geometry-dash/" }
 ];
 
 // =========================
@@ -187,14 +177,8 @@ const games = [
 
 const apps = [
   { title: "Scientific Calculator", url: "https://www.desmos.com/scientific" },
-  { title: "Graphing Calculator", url: "https://www.desmos.com/calculator" },
   { title: "Online Notepad", url: "https://anotepad.com/" },
-  { title: "Pixel Art Editor", url: "https://www.pixilart.com/draw" },
-  { title: "Music Maker", url: "https://onlinesequencer.net/" },
-  { title: "JS Playground", url: "https://jsfiddle.net/" },
-  { title: "HTML Playground", url: "https://codepen.io/pen/" },
-  { title: "Timer", url: "https://timer.onlineclock.net/" },
-  { title: "Unit Converter", url: "https://www.unitconverters.net/" }
+  { title: "Pixel Art Editor", url: "https://www.pixilart.com/draw" }
 ];
 
 // =========================
@@ -239,41 +223,7 @@ function loadApp(a) {
 }
 
 // =========================
-// SEARCH
-// =========================
-
-document.getElementById("searchInput").addEventListener("input", () => {
-  const q = searchInput.value.toLowerCase();
-  const filteredGames = games.filter(g => g.title.toLowerCase().includes(q));
-  const filteredApps = apps.filter(a => a.title.toLowerCase().includes(q));
-  renderFiltered(filteredGames, filteredApps);
-});
-
-function renderFiltered(gamesF, appsF) {
-  const gList = document.getElementById("gameList");
-  const aList = document.getElementById("appList");
-  gList.innerHTML = "";
-  aList.innerHTML = "";
-
-  gamesF.forEach(g => {
-    const li = document.createElement("li");
-    li.className = "list-item";
-    li.textContent = g.title;
-    li.onclick = () => loadGame(g);
-    gList.appendChild(li);
-  });
-
-  appsF.forEach(a => {
-    const li = document.createElement("li");
-    li.className = "list-item";
-    li.textContent = a.title;
-    li.onclick = () => loadApp(a);
-    aList.appendChild(li);
-  });
-}
-
-// =========================
-// AI – Smart Local Assistant
+// AI
 // =========================
 
 function addAIMessage(text, who="bot") {
@@ -293,33 +243,7 @@ function handleAI() {
   addAIMessage(text, "user");
   input.value = "";
 
-  const lower = text.toLowerCase();
-
-  if (lower.includes("best game")) {
-    return addAIMessage("Slope, Run 3, Moto X3M, Retro Bowl, and 1v1.lol are top picks.");
-  }
-
-  if (lower.includes("best app")) {
-    return addAIMessage("Desmos, Pixel Art Editor, and CodePen are great choices.");
-  }
-
-  if (lower.includes("help")) {
-    return addAIMessage("You can load games on the left, apps below them, and ask me anything.");
-  }
-
-  if (lower.includes("random game")) {
-    const g = games[Math.floor(Math.random() * games.length)];
-    loadGame(g);
-    return addAIMessage("Random game loaded: " + g.title);
-  }
-
-  if (lower.includes("random app")) {
-    const a = apps[Math.floor(Math.random() * apps.length)];
-    loadApp(a);
-    return addAIMessage("Random app loaded: " + a.title);
-  }
-
-  addAIMessage("I can help with games, apps, search, and info. Try asking: 'best game', 'random game', or 'help'.");
+  addAIMessage("I'm here! Try loading a game or app on the left.", "bot");
 }
 
 document.getElementById("aiSend").addEventListener("click", handleAI);
@@ -332,7 +256,7 @@ document.getElementById("aiInput").addEventListener("keydown", e => {
 // =========================
 
 renderLists();
-addAIMessage("Welcome to VORTEX Hub! Type 'help' to see what I can do.");
+addAIMessage("Welcome to VORTEX Hub!", "bot");
 </script>
 
 </body>
