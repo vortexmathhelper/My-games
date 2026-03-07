@@ -1,100 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VORTEX Hub</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a0a12;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 10;
+  }
+  #searchInput {
+    margin-left: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    width: 260px;
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    margin-top: 50px;
+  }
+  .sidebar {
+    width: 260px;
+    background: #141422;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar h2 {
+    margin: 10px;
+    font-size: 16px;
+  }
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px 10px;
+  }
+  .list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .list-item {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: #1d1d33;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .list-item:hover {
+    background: #2a2a44;
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #viewerTitle {
+    padding: 10px;
+    font-size: 16px;
+  }
+  #viewerFrame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: black;
+  }
+  .ai-panel {
+    height: 190px;
+    background: #141422;
+    border-top: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  #aiChat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    font-size: 13px;
+  }
+  .ai-msg {
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    max-width: 90%;
+  }
+  .ai-bot { background: #1f1f3a; }
+  .ai-user { background: #2b7cff; align-self: flex-end; }
+  .ai-input-row {
+    display: flex;
+    padding: 6px;
+    gap: 6px;
+  }
+  #aiInput {
+    flex: 1;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+  }
+  #aiSend {
+    padding: 6px 10px;
+    border: none;
+    background: #2b7cff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>VORTEX Hub</h1>
+  <input id="searchInput" placeholder="Search games & apps...">
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h2>Games</h2>
+    <div class="list"><ul id="gameList"></ul></div>
+
+    <h2>Apps</h2>
+    <div class="list"><ul id="appList"></ul></div>
+  </div>
+
+  <div class="main">
+    <div id="viewerTitle">Select something to load</div>
+    <iframe id="viewerFrame"></iframe>
+
+    <div class="ai-panel">
+      <div id="aiChat"></div>
+      <div class="ai-input-row">
+        <input id="aiInput" placeholder="Ask the VORTEX helper...">
+        <button id="aiSend">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // =========================
-// GAMES – iframe‑friendly HTML5
+// WORKING GAMES
 // =========================
 
 const games = [
-  // Arcade / Runners
-  { title: "Slope",              url: "https://ubg100.github.io/slope/",                     category: "Arcade",  tags: ["runner","3d","fast"] },
-  { title: "Run 3",              url: "https://ubg100.github.io/run-3/",                    category: "Arcade",  tags: ["runner","space"] },
-  { title: "Tunnel Rush",        url: "https://ubg100.github.io/tunnel-rush/",              category: "Arcade",  tags: ["tunnel","reaction"] },
-  { title: "Subway Surfers",     url: "https://ubg100.github.io/subway-surfers/",           category: "Arcade",  tags: ["runner","3d"] },
-  { title: "Geometry Dash",      url: "https://ubg100.github.io/geometry-dash/",            category: "Arcade",  tags: ["rhythm","hard"] },
-
-  // Sports
-  { title: "Basketball Stars",   url: "https://ubg100.github.io/basketball-stars/",         category: "Sports",  tags: ["basketball","2-player"] },
-  { title: "Retro Bowl",         url: "https://ubg100.github.io/retro-bowl/",               category: "Sports",  tags: ["football","retro"] },
-  { title: "Soccer Skills Euro", url: "https://ubg100.github.io/soccer-skills-euro-cup/",   category: "Sports",  tags: ["soccer"] },
-
-  // Racing
-  { title: "Moto X3M",           url: "https://ubg100.github.io/moto-x3m/",                 category: "Racing",  tags: ["bike","stunts"] },
-  { title: "Drift Hunters",      url: "https://ubg100.github.io/drift-hunters/",            category: "Racing",  tags: ["cars","drift"] },
-  { title: "Madalin Stunt Cars 2", url: "https://ubg100.github.io/madalin-stunt-cars-2/",   category: "Racing",  tags: ["cars","stunts"] },
-
-  // Shooters / Action
-  { title: "1v1.lol",            url: "https://ubg100.github.io/1v1-lol/",                  category: "Shooter", tags: ["fps","build"] },
-  { title: "Shell Shockers",     url: "https://ubg100.github.io/shell-shockers/",           category: "Shooter", tags: ["fps","eggs"] },
-  { title: "Krunker.io",         url: "https://ubg100.github.io/krunker-io/",               category: "Shooter", tags: ["fps","online"] },
-
-  // Puzzle / Logic
-  { title: "2048",               url: "https://ubg100.github.io/2048/",                     category: "Puzzle",  tags: ["numbers","logic"] },
-  { title: "Cut the Rope",       url: "https://ubg100.github.io/cut-the-rope/",             category: "Puzzle",  tags: ["physics"] },
-  { title: "Where’s My Water?",  url: "https://ubg100.github.io/wheres-my-water/",          category: "Puzzle",  tags: ["physics","water"] },
-
-  // Platformers
-  { title: "Fireboy & Watergirl",url: "https://ubg100.github.io/fireboy-and-watergirl-forest-temple/", category: "Platformer", tags:["co-op","puzzle"] },
-  { title: "Super Mario Flash",  url: "https://ubg100.github.io/super-mario-flash/",        category: "Platformer", tags:["classic"] },
-
-  // Idle / Clicker
-  { title: "Cookie Clicker",     url: "https://ubg100.github.io/cookie-clicker/",           category: "Idle",    tags:["clicker","idle"] },
-  { title: "Idle Breakout",      url: "https://ubg100.github.io/idle-breakout/",            category: "Idle",    tags:["bricks","idle"] },
-
-  // Sandbox / Misc
-  { title: "Sandbox City",       url: "https://ubg100.github.io/sandbox-city-cars-simulator/", category: "Sandbox", tags:["physics","sandbox"] },
-  { title: "Stickman Hook",      url: "https://ubg100.github.io/stickman-hook/",            category: "Arcade",  tags:["swing","physics"] },
+  { title: "Slope", url: "https://ubg100.github.io/slope/" },
+  { title: "Run 3", url: "https://ubg100.github.io/run-3/" },
+  { title: "Tunnel Rush", url: "https://ubg100.github.io/tunnel-rush/" },
+  { title: "Subway Surfers", url: "https://ubg100.github.io/subway-surfers/" },
+  { title: "Geometry Dash", url: "https://ubg100.github.io/geometry-dash/" },
+  { title: "Basketball Stars", url: "https://ubg100.github.io/basketball-stars/" },
+  { title: "Retro Bowl", url: "https://ubg100.github.io/retro-bowl/" },
+  { title: "Moto X3M", url: "https://ubg100.github.io/moto-x3m/" },
+  { title: "Drift Hunters", url: "https://ubg100.github.io/drift-hunters/" },
+  { title: "1v1.lol", url: "https://ubg100.github.io/1v1-lol/" },
+  { title: "Shell Shockers", url: "https://ubg100.github.io/shell-shockers/" },
+  { title: "2048", url: "https://ubg100.github.io/2048/" },
+  { title: "Cut the Rope", url: "https://ubg100.github.io/cut-the-rope/" },
+  { title: "Idle Breakout", url: "https://ubg100.github.io/idle-breakout/" },
+  { title: "Stickman Hook", url: "https://ubg100.github.io/stickman-hook/" }
 ];
 
 // =========================
-// APPS – more tools & toys
+// WORKING APPS
 // =========================
 
 const apps = [
-  { title: "Scientific Calculator", url: "https://www.desmos.com/scientific",   category: "Tools",        tags: ["math","calculator"] },
-  { title: "Graphing Calculator",   url: "https://www.desmos.com/calculator",   category: "Tools",        tags: ["math","graph"] },
-  { title: "Online Notepad",        url: "https://anotepad.com/",               category: "Productivity", tags: ["notes","text"] },
-  { title: "Markdown Editor",       url: "https://stackedit.io/app#",           category: "Productivity", tags: ["writing","markdown"] },
-  { title: "Pixel Art Editor",      url: "https://www.pixilart.com/draw",       category: "Creative",     tags: ["drawing","pixels"] },
-  { title: "JS Playground",         url: "https://jsfiddle.net/",               category: "Coding",       tags: ["code","js"] },
-  { title: "HTML Playground",       url: "https://codepen.io/pen/",             category: "Coding",       tags: ["html","css","js"] },
-  { title: "Music Maker",           url: "https://onlinesequencer.net/",        category: "Creative",     tags: ["music","loops"] },
-  { title: "Timer & Stopwatch",     url: "https://timer.onlineclock.net/",      category: "Tools",        tags: ["timer","clock"] },
-  { title: "Unit Converter",        url: "https://www.unitconverters.net/",     category: "Tools",        tags: ["convert","units"] },
-  { title: "Whiteboard",            url: "https://awwapp.com/b/",               category: "Creative",     tags: ["draw","whiteboard"] },
-  { title: "Mind Map",              url: "https://coggle.it/",                  category: "Productivity", tags: ["mindmap","ideas"] },
-  { title: "Kanban Board",          url: "https://kanbanflow.com/",             category: "Productivity", tags: ["tasks","board"] },
-  { title: "JSON Formatter",        url: "https://jsoneditoronline.org/",       category: "Coding",       tags: ["json","tools"] },
-  { title: "Regex Tester",          url: "https://regex101.com/",               category: "Coding",       tags: ["regex","test"] }
+  { title: "Scientific Calculator", url: "https://www.desmos.com/scientific" },
+  { title: "Graphing Calculator", url: "https://www.desmos.com/calculator" },
+  { title: "Online Notepad", url: "https://anotepad.com/" },
+  { title: "Pixel Art Editor", url: "https://www.pixilart.com/draw" },
+  { title: "Music Maker", url: "https://onlinesequencer.net/" },
+  { title: "JS Playground", url: "https://jsfiddle.net/" },
+  { title: "HTML Playground", url: "https://codepen.io/pen/" },
+  { title: "Timer", url: "https://timer.onlineclock.net/" },
+  { title: "Unit Converter", url: "https://www.unitconverters.net/" }
 ];
-
-let lastSelectedGame = null;
-let lastSelectedApp = null;
 
 // =========================
 // RENDER LISTS
 // =========================
 
-function renderLists(filteredGames = null, filteredApps = null) {
+function renderLists() {
   const gList = document.getElementById("gameList");
   const aList = document.getElementById("appList");
   gList.innerHTML = "";
   aList.innerHTML = "";
 
-  const g = filteredGames || games;
-  const a = filteredApps || apps;
-
-  g.forEach(game => {
+  games.forEach(g => {
     const li = document.createElement("li");
     li.className = "list-item";
-    li.textContent = game.title;
-    li.onclick = () => loadGame(game);
+    li.textContent = g.title;
+    li.onclick = () => loadGame(g);
     gList.appendChild(li);
   });
 
-  a.forEach(app => {
+  apps.forEach(a => {
     const li = document.createElement("li");
     li.className = "list-item";
-    li.textContent = app.title;
-    li.onclick = () => loadApp(app);
+    li.textContent = a.title;
+    li.onclick = () => loadApp(a);
     aList.appendChild(li);
   });
 }
@@ -104,14 +229,12 @@ function renderLists(filteredGames = null, filteredApps = null) {
 // =========================
 
 function loadGame(g) {
-  lastSelectedGame = g;
-  document.getElementById("viewerTitle").textContent = g.title + " (Game)";
+  document.getElementById("viewerTitle").textContent = g.title;
   document.getElementById("viewerFrame").src = g.url;
 }
 
 function loadApp(a) {
-  lastSelectedApp = a;
-  document.getElementById("viewerTitle").textContent = a.title + " (App)";
+  document.getElementById("viewerTitle").textContent = a.title;
   document.getElementById("viewerFrame").src = a.url;
 }
 
@@ -119,33 +242,38 @@ function loadApp(a) {
 // SEARCH
 // =========================
 
-function setupSearch() {
-  const searchInput = document.getElementById("searchInput");
-  searchInput.addEventListener("input", () => {
-    const q = searchInput.value.trim().toLowerCase();
-    if (!q) {
-      renderLists();
-      return;
-    }
+document.getElementById("searchInput").addEventListener("input", () => {
+  const q = searchInput.value.toLowerCase();
+  const filteredGames = games.filter(g => g.title.toLowerCase().includes(q));
+  const filteredApps = apps.filter(a => a.title.toLowerCase().includes(q));
+  renderFiltered(filteredGames, filteredApps);
+});
 
-    const filteredGames = games.filter(g =>
-      g.title.toLowerCase().includes(q) ||
-      g.category.toLowerCase().includes(q) ||
-      (g.tags && g.tags.some(t => t.toLowerCase().includes(q)))
-    );
+function renderFiltered(gamesF, appsF) {
+  const gList = document.getElementById("gameList");
+  const aList = document.getElementById("appList");
+  gList.innerHTML = "";
+  aList.innerHTML = "";
 
-    const filteredApps = apps.filter(a =>
-      a.title.toLowerCase().includes(q) ||
-      a.category.toLowerCase().includes(q) ||
-      (a.tags && a.tags.some(t => t.toLowerCase().includes(q)))
-    );
+  gamesF.forEach(g => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = g.title;
+    li.onclick = () => loadGame(g);
+    gList.appendChild(li);
+  });
 
-    renderLists(filteredGames, filteredApps);
+  appsF.forEach(a => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = a.title;
+    li.onclick = () => loadApp(a);
+    aList.appendChild(li);
   });
 }
 
 // =========================
-// AI HELPER – “fake Copilot”
+// AI – Smart Local Assistant
 // =========================
 
 function addAIMessage(text, who="bot") {
@@ -157,86 +285,6 @@ function addAIMessage(text, who="bot") {
   chat.scrollTop = chat.scrollHeight;
 }
 
-const aiKnowledge = [
-  {
-    test: t => t.includes("best") && t.includes("game"),
-    reply: () => "Strong picks: Slope, Run 3, Moto X3M, Retro Bowl, and 1v1.lol. You can also type /random game."
-  },
-  {
-    test: t => t.includes("best") && t.includes("app"),
-    reply: () => "For apps: Desmos, Pixel Art Editor, CodePen, and JSFiddle are great. Try /random app."
-  },
-  {
-    test: t => t.includes("school") || t.includes("blocked"),
-    reply: () => "I can’t see your school’s filter, but these are iframe‑friendly sites. If one is blocked, try another or swap the URL in the code."
-  },
-  {
-    test: t => t.includes("search"),
-    reply: () => "Use the search bar at the top. It filters both games and apps by title, category, and tags in real time."
-  },
-  {
-    test: t => t.includes("add") && t.includes("game"),
-    reply: () => "To add a game, copy one of the objects in the games array and change the title/url/category/tags."
-  },
-  {
-    test: t => t.includes("add") && t.includes("app"),
-    reply: () => "To add an app, copy one of the objects in the apps array and change the title/url/category/tags."
-  },
-  {
-    test: t => t.includes("how") && t.includes("work"),
-    reply: () => "VORTEX Hub: left = games/apps list, center = iframe viewer, bottom = AI helper. Search filters everything."
-  },
-  {
-    test: t => t.includes("who") && t.includes("you"),
-    reply: () => "I’m the local VORTEX helper—scripted, not cloud AI—but tuned to feel smart inside this page."
-  }
-];
-
-function aiCommandHelp() {
-  return [
-    "Commands you can use:",
-    "• /help – show this help",
-    "• /random game – load a random game",
-    "• /random app – load a random app",
-    "• /last game – info about the last game you opened",
-    "• /last app – info about the last app you opened",
-    "• /info – explain how VORTEX works"
-  ].join("\n");
-}
-
-function aiHandleCommand(text) {
-  const lower = text.toLowerCase();
-
-  if (lower === "/help") {
-    return aiCommandHelp();
-  }
-  if (lower === "/info") {
-    return "VORTEX Hub is a web launcher: left = games/apps, center = iframe, bottom = AI helper. Search filters everything.";
-  }
-  if (lower === "/random game") {
-    if (!games.length) return "No games are configured yet.";
-    const g = games[Math.floor(Math.random() * games.length)];
-    loadGame(g);
-    return "Random game loaded: " + g.title;
-  }
-  if (lower === "/random app") {
-    if (!apps.length) return "No apps are configured yet.";
-    const a = apps[Math.floor(Math.random() * apps.length)];
-    loadApp(a);
-    return "Random app loaded: " + a.title;
-  }
-  if (lower === "/last game") {
-    if (!lastSelectedGame) return "You haven’t opened any game yet.";
-    return "Last game you opened was: " + lastSelectedGame.title + " (" + lastSelectedGame.category + ").";
-  }
-  if (lower === "/last app") {
-    if (!lastSelectedApp) return "You haven’t opened any app yet.";
-    return "Last app you opened was: " + lastSelectedApp.title + " (" + lastSelectedApp.category + ").";
-  }
-
-  return null;
-}
-
 function handleAI() {
   const input = document.getElementById("aiInput");
   const text = input.value.trim();
@@ -245,61 +293,47 @@ function handleAI() {
   addAIMessage(text, "user");
   input.value = "";
 
-  // Commands
-  if (text.startsWith("/")) {
-    const cmdReply = aiHandleCommand(text);
-    if (cmdReply) {
-      setTimeout(() => addAIMessage(cmdReply, "bot"), 150);
-      return;
-    } else {
-      setTimeout(() => addAIMessage("Unknown command. Type /help to see what I can do.", "bot"), 150);
-      return;
-    }
-  }
-
   const lower = text.toLowerCase();
 
-  // Knowledge-based replies
-  for (const item of aiKnowledge) {
-    try {
-      if (item.test(lower)) {
-        const reply = typeof item.reply === "function" ? item.reply() : item.reply;
-        setTimeout(() => addAIMessage(reply, "bot"), 200);
-        return;
-      }
-    } catch (e) {
-      // ignore
-    }
+  if (lower.includes("best game")) {
+    return addAIMessage("Slope, Run 3, Moto X3M, Retro Bowl, and 1v1.lol are top picks.");
   }
 
-  // Generic fallback
-  const fallback = "I’m a local VORTEX helper, not full cloud AI, but I can help with games, apps, search, and commands like /help, /random game, /random app.";
-  setTimeout(() => addAIMessage(fallback, "bot"), 200);
+  if (lower.includes("best app")) {
+    return addAIMessage("Desmos, Pixel Art Editor, and CodePen are great choices.");
+  }
+
+  if (lower.includes("help")) {
+    return addAIMessage("You can load games on the left, apps below them, and ask me anything.");
+  }
+
+  if (lower.includes("random game")) {
+    const g = games[Math.floor(Math.random() * games.length)];
+    loadGame(g);
+    return addAIMessage("Random game loaded: " + g.title);
+  }
+
+  if (lower.includes("random app")) {
+    const a = apps[Math.floor(Math.random() * apps.length)];
+    loadApp(a);
+    return addAIMessage("Random app loaded: " + a.title);
+  }
+
+  addAIMessage("I can help with games, apps, search, and info. Try asking: 'best game', 'random game', or 'help'.");
 }
 
-function setupAI() {
-  const btn = document.getElementById("aiSend");
-  const input = document.getElementById("aiInput");
-
-  btn.addEventListener("click", handleAI);
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAI();
-    }
-  });
-
-  addAIMessage("Welcome to VORTEX Hub. Type /help to see what I can do, or just ask about games, apps, or search.", "bot");
-}
+document.getElementById("aiSend").addEventListener("click", handleAI);
+document.getElementById("aiInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") handleAI();
+});
 
 // =========================
 // INIT
 // =========================
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderLists();
-  setupSearch();
-  setupAI();
-  if (games[0]) loadGame(games[0]);
-});
+renderLists();
+addAIMessage("Welcome to VORTEX Hub! Type 'help' to see what I can do.");
 </script>
+
+</body>
+</html>
