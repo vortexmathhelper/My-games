@@ -1,235 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VORTEX Hub</title>
+<style>
+  body {
+    margin: 0;
+    background: #0a0a12;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    z-index: 10;
+  }
+  #searchInput {
+    margin-left: 10px;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    width: 250px;
+  }
+  .container {
+    display: flex;
+    flex: 1;
+    margin-top: 50px;
+  }
+  .sidebar {
+    width: 260px;
+    background: #141422;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar h2 {
+    margin: 10px;
+    font-size: 16px;
+  }
+  .list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 10px 10px;
+  }
+  .list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .list-item {
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: #1d1d33;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .list-item:hover {
+    background: #2a2a44;
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #viewerTitle {
+    padding: 10px;
+    font-size: 16px;
+  }
+  #viewerFrame {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background: black;
+  }
+  .ai-panel {
+    height: 180px;
+    background: #141422;
+    border-top: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  #aiChat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .ai-msg {
+    padding: 6px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    max-width: 90%;
+  }
+  .ai-bot { background: #1f1f3a; }
+  .ai-user { background: #2b7cff; align-self: flex-end; }
+  .ai-input-row {
+    display: flex;
+    padding: 6px;
+    gap: 6px;
+  }
+  #aiInput {
+    flex: 1;
+    padding: 6px;
+    border-radius: 4px;
+    border: none;
+  }
+  #aiSend {
+    padding: 6px 10px;
+    border: none;
+    background: #2b7cff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>VORTEX Hub</h1>
+  <input id="searchInput" placeholder="Search games & apps...">
+</header>
+
+<div class="container">
+  <div class="sidebar">
+    <h2>Games</h2>
+    <div class="list"><ul id="gameList"></ul></div>
+
+    <h2>Apps</h2>
+    <div class="list"><ul id="appList"></ul></div>
+  </div>
+
+  <div class="main">
+    <div id="viewerTitle">Select something to load</div>
+    <iframe id="viewerFrame"></iframe>
+
+    <div class="ai-panel">
+      <div id="aiChat"></div>
+      <div class="ai-input-row">
+        <input id="aiInput" placeholder="Ask the VORTEX helper...">
+        <button id="aiSend">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // =========================
-// DATA: GAMES & APPS
+// BASIC TEST DATA (WORKS)
 // =========================
 
-// You can expand these to 1000+ games and 50+ apps.
-// Just keep the same { title, url, category, tags } format.
-// All URLs should be direct HTML5 game/app pages that work in an <iframe>.
-
 const games = [
-  {
-    title: "Slope",
-    url: "https://example.com/html5/slope/index.html",
-    category: "Arcade",
-    tags: ["runner","3d","fast"]
-  },
-  {
-    title: "Run 3",
-    url: "https://example.com/html5/run3/index.html",
-    category: "Arcade",
-    tags: ["runner","space"]
-  },
-  {
-    title: "Moto X3M",
-    url: "https://example.com/html5/motox3m/index.html",
-    category: "Racing",
-    tags: ["bike","stunts"]
-  },
-  {
-    title: "1v1.lol Clone",
-    url: "https://example.com/html5/1v1/index.html",
-    category: "Shooter",
-    tags: ["fps","build","online"]
-  },
-  {
-    title: "Basketball Stars",
-    url: "https://example.com/html5/basketballstars/index.html",
-    category: "Sports",
-    tags: ["basketball","2-player"]
-  },
-  {
-    title: "Tunnel Rush",
-    url: "https://example.com/html5/tunnelrush/index.html",
-    category: "Arcade",
-    tags: ["tunnel","reaction"]
-  },
-  {
-    title: "Subway Surfers Clone",
-    url: "https://example.com/html5/subway/index.html",
-    category: "Arcade",
-    tags: ["runner","3d"]
-  },
-  {
-    title: "Stickman Hook",
-    url: "https://example.com/html5/stickmanhook/index.html",
-    category: "Arcade",
-    tags: ["swing","physics"]
-  },
-  {
-    title: "Geometry Dash",
-    url: "https://example.com/html5/geometrydash/index.html",
-    category: "Arcade",
-    tags: ["rhythm","hard"]
-  },
-  {
-    title: "Retro Bowl",
-    url: "https://example.com/html5/retrobowl/index.html",
-    category: "Sports",
-    tags: ["football","retro"]
-  }
-  // 👉 Add more here up to 1000+ entries
+  { title: "Test Game", url: "https://example.com", category: "Test", tags: [] }
 ];
 
 const apps = [
-  {
-    title: "Scientific Calculator",
-    url: "https://example.com/html5/apps/calculator/index.html",
-    category: "Tools",
-    tags: ["math","calculator"]
-  },
-  {
-    title: "Pixel Art Editor",
-    url: "https://example.com/html5/apps/pixelart/index.html",
-    category: "Creative",
-    tags: ["drawing","pixels"]
-  },
-  {
-    title: "Code Editor",
-    url: "https://example.com/html5/apps/codeeditor/index.html",
-    category: "Tools",
-    tags: ["coding","editor"]
-  },
-  {
-    title: "Music Maker",
-    url: "https://example.com/html5/apps/music/index.html",
-    category: "Creative",
-    tags: ["music","loops"]
-  },
-  {
-    title: "Notes",
-    url: "https://example.com/html5/apps/notes/index.html",
-    category: "Productivity",
-    tags: ["notes","text"]
-  }
-  // 👉 Add more here up to 50+ entries
+  { title: "Test App", url: "https://example.com", category: "Test", tags: [] }
 ];
 
 // =========================
-// UTILS
+// RENDER LISTS
 // =========================
 
-function isSchoolSafeUrl(url) {
-  // Basic check; you control the domain list.
-  // Make sure you only use domains that work at school.
-  return url.startsWith("https://");
-}
+function renderLists() {
+  const gList = document.getElementById("gameList");
+  const aList = document.getElementById("appList");
 
-function createListItem(item, type) {
-  const li = document.createElement("li");
-  li.className = "list-item";
-  li.textContent = item.title;
-  li.addEventListener("click", () => {
-    if (type === "game") {
-      loadGame(item);
-    } else {
-      loadApp(item);
-    }
-  });
-  return li;
-}
+  gList.innerHTML = "";
+  aList.innerHTML = "";
 
-// =========================
-// RENDERING LISTS
-// =========================
-
-function renderLists(filteredGames = null, filteredApps = null) {
-  const gameListEl = document.getElementById("gameList");
-  const appListEl = document.getElementById("appList");
-  if (!gameListEl || !appListEl) return;
-
-  gameListEl.innerHTML = "";
-  appListEl.innerHTML = "";
-
-  const g = filteredGames || games;
-  const a = filteredApps || apps;
-
-  g.forEach(game => {
-    if (isSchoolSafeUrl(game.url)) {
-      gameListEl.appendChild(createListItem(game, "game"));
-    }
+  games.forEach(g => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = g.title;
+    li.onclick = () => loadGame(g);
+    gList.appendChild(li);
   });
 
-  a.forEach(app => {
-    if (isSchoolSafeUrl(app.url)) {
-      appListEl.appendChild(createListItem(app, "app"));
-    }
+  apps.forEach(a => {
+    const li = document.createElement("li");
+    li.className = "list-item";
+    li.textContent = a.title;
+    li.onclick = () => loadApp(a);
+    aList.appendChild(li);
   });
 }
 
 // =========================
-// LOADING GAME / APP
+// LOAD GAME / APP
 // =========================
 
-function setViewerTitle(text) {
-  const titleEl = document.getElementById("viewerTitle");
-  if (titleEl) titleEl.textContent = text;
+function loadGame(g) {
+  document.getElementById("viewerTitle").textContent = g.title;
+  document.getElementById("viewerFrame").src = g.url;
 }
 
-function loadGame(game) {
-  const frame = document.getElementById("viewerFrame");
-  if (!frame) return;
-  if (!isSchoolSafeUrl(game.url)) {
-    setViewerTitle("Blocked / Not school-safe");
-    frame.src = "about:blank";
-    return;
-  }
-  frame.src = game.url;
-  setViewerTitle(game.title + " (Game)");
-}
-
-function loadApp(app) {
-  const frame = document.getElementById("viewerFrame");
-  if (!frame) return;
-  if (!isSchoolSafeUrl(app.url)) {
-    setViewerTitle("Blocked / Not school-safe");
-    frame.src = "about:blank";
-    return;
-  }
-  frame.src = app.url;
-  setViewerTitle(app.title + " (App)");
+function loadApp(a) {
+  document.getElementById("viewerTitle").textContent = a.title;
+  document.getElementById("viewerFrame").src = a.url;
 }
 
 // =========================
-// SEARCH ENGINE
+// AI HELPER
 // =========================
 
-function setupSearch() {
-  const searchInput = document.getElementById("searchInput");
-  if (!searchInput) return;
-
-  searchInput.addEventListener("input", () => {
-    const q = searchInput.value.trim().toLowerCase();
-
-    if (!q) {
-      renderLists();
-      return;
-    }
-
-    const filteredGames = games.filter(g =>
-      g.title.toLowerCase().includes(q) ||
-      g.category.toLowerCase().includes(q) ||
-      (g.tags && g.tags.some(t => t.toLowerCase().includes(q)))
-    );
-
-    const filteredApps = apps.filter(a =>
-      a.title.toLowerCase().includes(q) ||
-      a.category.toLowerCase().includes(q) ||
-      (a.tags && a.tags.some(t => t.toLowerCase().includes(q)))
-    );
-
-    renderLists(filteredGames, filteredApps);
-  });
-}
-
-// =========================
-// ON-PAGE AI HELPER
-// =========================
-
-function addAIMessage(text, who = "bot") {
+function addAIMessage(text, who="bot") {
   const chat = document.getElementById("aiChat");
-  if (!chat) return;
-
   const msg = document.createElement("div");
   msg.className = "ai-msg " + (who === "user" ? "ai-user" : "ai-bot");
   msg.textContent = text;
@@ -237,71 +224,26 @@ function addAIMessage(text, who = "bot") {
   chat.scrollTop = chat.scrollHeight;
 }
 
-function handleAIInput() {
+function handleAI() {
   const input = document.getElementById("aiInput");
-  if (!input) return;
-  const raw = input.value.trim();
-  if (!raw) return;
+  const text = input.value.trim();
+  if (!text) return;
 
-  addAIMessage(raw, "user");
+  addAIMessage(text, "user");
   input.value = "";
 
-  const lower = raw.toLowerCase();
-  let reply = "";
-
-  if (lower.includes("hi") || lower.includes("hello")) {
-    reply = "Hey! I’m the VORTEX helper. I can explain how to use this hub and where things are.";
-  } else if (lower.includes("game") && lower.includes("best")) {
-    reply = "Some popular picks here are Slope, Run 3, Moto X3M, and Retro Bowl. Click them in the list to load.";
-  } else if (lower.includes("school") || lower.includes("blocked")) {
-    reply = "I try to only show iframe‑friendly HTML5 games. If something is blocked, swap the URL in the games list to a school‑safe mirror.";
-  } else if (lower.includes("search")) {
-    reply = "Use the search bar at the top. It filters both games and apps by title, category, and tags.";
-  } else if (lower.includes("add") && lower.includes("game")) {
-    reply = "To add a game, edit index.html, find the games array, and add a new { title, url, category, tags } entry.";
-  } else if (lower.includes("add") && lower.includes("app")) {
-    reply = "To add an app, edit the apps array the same way: { title, url, category, tags }.";
-  } else if (lower.includes("help") || lower.includes("what can you do")) {
-    reply = "I can explain how this hub works, where to click, and how to add more games/apps by editing index.html.";
-  } else {
-    reply = "I’m a small on‑page helper, not a full AI like this chat, but I can guide you around VORTEX and explain how to edit the file.";
-  }
-
-  setTimeout(() => addAIMessage(reply, "bot"), 200);
+  addAIMessage("I'm here! The hub is working now. Add real games next.", "bot");
 }
 
-function setupAI() {
-  const sendBtn = document.getElementById("aiSend");
-  const input = document.getElementById("aiInput");
-
-  if (sendBtn) {
-    sendBtn.addEventListener("click", handleAIInput);
-  }
-  if (input) {
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleAIInput();
-      }
-    });
-  }
-}
+document.getElementById("aiSend").onclick = handleAI;
 
 // =========================
 // INIT
 // =========================
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderLists();
-  setupSearch();
-  setupAI();
-
-  // Auto-load first game if available
-  if (games[0]) {
-    loadGame(games[0]);
-  }
-
-  // If you have an RGB mode function in your CSS/JS, call it here.
-  // changeRgbMode("rainbow"); // <- only if you defined this elsewhere
-});
+renderLists();
+addAIMessage("Welcome to VORTEX Hub!", "bot");
 </script>
+
+</body>
+</html>
